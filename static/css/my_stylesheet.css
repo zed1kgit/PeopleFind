@@ -1,0 +1,76 @@
+body:after {
+    content: "";
+    width: 100vw;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-size: cover;
+    background-color: rgba(38, 30, 74, 0.5);
+}
+
+.top_menu {
+    position: sticky;
+    top: 0;
+    background: rgba(38, 30, 74, 0.4);
+    box-shadow: 0 1px 29px 10px rgba(38, 30, 74, 0.5);
+    transition: 0.3s ease-in-out;
+    border-bottom: unset;
+    color: #fff;
+    height: 46px;
+    z-index: 10;
+    align-items: center;
+    display: flex;
+    justify-content: space-around
+}
+
+.top_menu:hover {
+    background: linear-gradient(to bottom, rgba(38, 30, 74, 0.6) 0, rgba(38, 30, 74, 0.6) 70%, rgba(38, 30, 74, 0.6) 100%) !important;
+    box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+.top_menu .logo-container {
+    align-items: center;
+    display: flex;
+    height: 46px;
+    padding: 0 5px;
+}
+
+/*.top_menu .logo-container .logo {*/
+/*    background: url() no-repeat center;*/
+/*    height: 60px;*/
+/*    width: 60px;*/
+/*    background-size: auto 80%;*/
+/*}*/
+
+.top_menu .logo-container .logo-text {
+    color: #fff;
+    text-decoration: inherit;
+    font-size: 1.5em;
+}
+
+.user-dropdown {
+    color: #fff
+}
+
+.page {
+    display: block;
+    margin: 40px auto 15px;
+    max-width: 1200px;
+    min-height: 50px;
+    position: relative;
+    padding: 10px 15px;
+    border-radius: 12px;
+    background-color: rgba(38, 30, 74, 0.8);
+    box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.3);
+    clear: both;
+    box-sizing: border-box;
+}
+
+.test {
+    min-height: 2000px;
+    padding-top: 5px;
+}
