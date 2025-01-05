@@ -1,0 +1,7 @@
+Django
+python-dotenv
+pillow
+psycopg2-binary
+redis
+celery
+coverage
