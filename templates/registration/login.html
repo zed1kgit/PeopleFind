@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="card-header">Авторизация</div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div>
+                <button type="submit" class="btn btn-success">Вход</button>
+                <a class="btn my-btn" href="{% url 'users:register' %}">Зарегистрировать новый аккаунт</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}
