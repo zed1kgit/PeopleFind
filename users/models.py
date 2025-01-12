@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.utils.translation import gettext_lazy as _
 
 NULLABLE = {'blank': True, 'null': True}
 
@@ -13,12 +12,12 @@ class UserRoles(models.TextChoices):
 
 class User(AbstractUser):
     username = None
-    email = models.EmailField(unique=True, verbose_name='email')
+    email = models.EmailField(unique=True, verbose_name='Email')
     role = models.CharField(max_length=9, choices=UserRoles.choices, default=UserRoles.USER)
-    first_name = models.CharField(max_length=60, verbose_name='First name', default='Anonymous')
-    last_name = models.CharField(max_length=60, verbose_name='Last name', default='Anonymous')
-    hobbies = models.CharField(max_length=350,verbose_name='Hobbies' , **NULLABLE)
-    avatar = models.ImageField(upload_to='users/', verbose_name='Avatar', **NULLABLE)
+    name = models.CharField(blank=False, max_length=60, verbose_name='Отображаемое имя')
+    nickname = models.CharField(unique=True, blank=False, max_length=60, verbose_name='Имя пользователя')
+    description = models.CharField(max_length=350, verbose_name='Описание', **NULLABLE)
+    avatar = models.ImageField(upload_to='users/', verbose_name='Аватар', **NULLABLE)
     is_active = models.BooleanField(default=True, verbose_name='Active')
 
     USERNAME_FIELD = 'email'
