@@ -32,7 +32,7 @@
 
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
             {% if user.is_authenticated %}
-                <li><a class="dropdown-item" href="#">Профиль</a></li>
+                <li><a class="dropdown-item" href="{% url 'users:profile' user.pk %}">Профиль</a></li>
                 <li>
                     <form method="post" action="{% url 'users:logout' %}">
                         {% csrf_token %}

@@ -14,8 +14,8 @@ class User(AbstractUser):
     username = None
     email = models.EmailField(unique=True, verbose_name='Email')
     role = models.CharField(max_length=9, choices=UserRoles.choices, default=UserRoles.USER)
-    name = models.CharField(blank=False, max_length=60, verbose_name='Отображаемое имя')
-    nickname = models.CharField(unique=True, blank=False, max_length=60, verbose_name='Имя пользователя')
+    name = models.CharField(blank=False, max_length=16, verbose_name='Отображаемое имя')
+    nickname = models.SlugField(unique=True, blank=False, db_index=True, max_length=12, verbose_name='Имя пользователя')
     description = models.CharField(max_length=350, verbose_name='Описание', **NULLABLE)
     avatar = models.ImageField(upload_to='users/', verbose_name='Аватар', **NULLABLE)
     is_active = models.BooleanField(default=True, verbose_name='Active')

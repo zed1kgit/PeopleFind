@@ -25,6 +25,7 @@ class UserRegisterView(CreateView):
         context['title'] = 'Регистрация'
         return context
 
+
 class UserLoginView(LoginView):
     form_class = UserLoginForm
 
@@ -33,5 +34,11 @@ class UserLoginView(LoginView):
         context['title'] = 'Авторизация'
         return context
 
+
 class UserLogoutView(LogoutView):
     pass
+
+
+class UserProfileView(DetailView):
+    model = User
+
