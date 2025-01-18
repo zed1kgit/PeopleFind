@@ -8,3 +8,9 @@ def user_media(value):
     if value:
         return fr'/media/{value}'
     return '/static/noavatar.png'
+
+@register.filter
+def interest_media(value):
+    if value:
+        return fr'/media/{value}'
+    return '/static/noavatar.png'

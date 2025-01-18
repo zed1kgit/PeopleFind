@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load my_tags %}
+{% block content %}
+    <div>
+        <div class="profile-head">
+            <div class="avatar">
+                <img class=""
+                     src="{{ object.logo|interest_media }}" width="200" height="200"
+                     alt="{{ object.name }}"
+                     title="{{ object.name }}">
+            </div>
+            <div class="card-header">{{ object.name }}</div>
+            <div class="card-body">
+                <span class="card-text">Описание: {{ object.description|default:"Информация отсутствует." }}</span><br>
+                <span class="card-text">Пользователи: {% for member in object.members.all %}
+                    <a href="{% url 'users:profile' member.slug %}">{{ member|default:"Отсутствуют." }}</a>
+                {% endfor %}</span><br>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
