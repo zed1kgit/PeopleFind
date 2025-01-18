@@ -14,13 +14,13 @@ class StyleFormMixin:
 class UserForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = User
-        fields = ('email', 'name', 'nickname', 'avatar', 'description',)
+        fields = ('email', 'name', 'slug', 'avatar', 'description',)
 
 
 class UserRegisterForm(StyleFormMixin, UserCreationForm):
     class Meta:
         model = User
-        fields = ('email', 'nickname', 'name', )
+        fields = ('email', 'slug', 'name', )
 
 
 class UserLoginForm(StyleFormMixin, AuthenticationForm):
@@ -30,4 +30,4 @@ class UserLoginForm(StyleFormMixin, AuthenticationForm):
 class UserUpdateForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = User
-        fields = ('email', 'name', 'nickname', 'avatar', 'description',)
+        fields = ('email', 'name', 'slug', 'avatar', 'description',)
