@@ -164,3 +164,7 @@ body:after {
     display: block;
     content: ' ';
 }
+
+.avatar img {
+    border-radius: 5%;
+}
