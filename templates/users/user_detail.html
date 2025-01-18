@@ -1,20 +1,20 @@
 {% extends 'base.html' %}
 {% load my_tags %}
 {% block content %}
-    <div style="min-height: 350px">
-    <div class="profile-head">
-        <div class="avatar">
-            <img class=""
-                 src="{{ object.avatar|user_media }}" width="200" height="200"
-                 alt="{{ object.name }}"
-                 title="{{ object.name }}">
+    <div>
+        <div class="profile-head">
+            <div class="avatar">
+                <img class=""
+                     src="{{ object.avatar|user_media }}" width="200" height="200"
+                     alt="{{ object.name }}"
+                     title="{{ object.name }}">
+            </div>
+            <div class="card-header">{{ object.name }}</div>
+            <div class="card-body">
+                <span class="card-text">Почта: {{ object.email }}</span><br>
+                <span class="card-text">О себе: {{ object.description|default:"Информация отсутствует." }}</span><br>
+            </div>
         </div>
-        <div class="card-header">{{ object.name }}</div>
-        <div class="card-body">
-            <span class="card-text">Почта: {{ object.email }}</span><br>
-            <span class="card-text">О себе: {{ object.description|default:"Информация отсутствует." }}</span><br>
-        </div>
-    </div>
     </div>
 
 {% endblock %}

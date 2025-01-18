@@ -150,3 +150,17 @@ body:after {
     float: left;
     max-width: 300px;
 }
+
+.dropdown:hover .dropdown-menu {
+      display: block;
+}
+
+.profile-head {
+    padding: 15px 15px 0 15px;
+}
+
+.profile-head:after {
+    clear: left;
+    display: block;
+    content: ' ';
+}
