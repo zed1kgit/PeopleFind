@@ -2,21 +2,34 @@
 {% load my_tags %}
 {% block content %}
     <div>
-        <div class="profile-head">
-            <div class="avatar">
-                <img class=""
-                     src="{{ object.logo|interest_media }}" width="200" height="200"
-                     alt="{{ object.name }}"
-                     title="{{ object.name }}">
+        <header class="head">
+            <h1>{{ object.name }}</h1>
+            <a href="{% url 'interests:list' %}">Все интересы</a>
+        </header>
+        <div class="int-menu">
+            <div class="content">
+                <div class="block">
+                    {{ object.description|default:"Нет описания" }}
+                </div>
             </div>
-            <div class="card-header">{{ object.name }}</div>
-            <div class="card-body">
-                <span class="card-text">Описание: {{ object.description|default:"Информация отсутствует." }}</span><br>
-                <span class="card-text">Пользователи: {% for member in object.members.all %}
-                    <a href="{% url 'users:profile' member.slug %}">{{ member|default:"Отсутствуют." }}</a>
-                {% endfor %}</span><br>
-            </div>
+            <aside class="menu">
+                <div>
+                    <div class="int-logo">
+                        <img src="{{ object.logo|interest_media }}">
+                    </div>
+                    <div class="block">
+                        <div class="headline">участники
+                            <div class="count">{{ object.members.count }}</div>
+                        </div>
+                        <div class="members">
+                            {% for member in object.members.all %}
+                            	{% include 'includes/user_avatar.html' with object=member %}
+                            {% endfor %}
+                            
+                        </div>
+                    </div>
+                </div>
+            </aside>
         </div>
     </div>
-
 {% endblock %}

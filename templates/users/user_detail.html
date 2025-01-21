@@ -3,17 +3,21 @@
 {% block content %}
     <div>
         <div class="profile-head">
-            <div class="avatar">
+            <div class="user-avatar">
                 <img class=""
                      src="{{ object.avatar|user_media }}" width="200" height="200"
                      alt="{{ object.name }}"
                      title="{{ object.name }}">
             </div>
-            <div class="card-header">{{ object.name }}</div>
+            <h1 class="user-name">{{ object.name }}</h1>
             <div class="card-body">
                 <span class="card-text">Почта: {{ object.email }}</span><br>
                 <span class="card-text">О себе: {{ object.description|default:"Информация отсутствует." }}</span><br>
             </div>
+        </div>
+        <div class="block">
+            <div class="headline">интересы</div>
+            
         </div>
     </div>
 
