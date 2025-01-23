@@ -17,7 +17,11 @@
         </div>
         <div class="block">
             <div class="headline">интересы</div>
-            
+            <div class="interests">
+                {% for interest in object.interests.all %}
+                    {% include 'includes/interest_inc.html' with object=interest %}
+                {% endfor %}
+            </div>
         </div>
     </div>
 

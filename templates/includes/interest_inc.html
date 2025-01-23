@@ -1,0 +1,4 @@
+{% load my_tags %}
+<a class="interest" href="{% url 'interests:detail' object.pk %}"><img alt="{{ object.name }}"
+                                                                       src="{{ object.logo|interest_media }}">{{ object.name }}
+</a>
