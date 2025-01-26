@@ -48,3 +48,10 @@ class SelfProfileView(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         user = self.request.user
         return reverse_lazy('users:profile', kwargs={'slug': user.slug})
+
+
+class UserIdRedirectView(RedirectView):
+    model = User
+    def get_redirect_url(self, *args, **kwargs):
+        user_slug = User.objects.get(pk=self.kwargs['pk']).slug
+        return reverse_lazy('users:profile', kwargs={'slug': user_slug})
