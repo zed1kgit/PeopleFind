@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load my_tags %}
+{% block content %}
+    <div>
+        <header class="head">
+            <h1>Интересы</h1>
+            <p class="clearfix">Список всех интересов по количеству участников</p>
+        </header>
+        <div class="interests">
+            {% for interest in object_list %}
+                {% include 'includes/interest_info_inc.html' with object=interest %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

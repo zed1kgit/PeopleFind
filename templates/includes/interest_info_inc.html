@@ -1,0 +1,17 @@
+{% load my_tags %}
+<div class="detailed">
+    <a class="interest-name-logo" href="{% url 'interests:detail' object.pk %}" title="{{ object.name }}">
+        <img alt="{{ object.name }}" class="interest-logo" src="{{ object.logo|interest_media }}" height="64px"
+             width="64px">
+        <div class="interest-name">{{ object.name }}</div>
+    </a>
+    <div class="info">
+        <span class="grouped">
+            <span class="number">{{ object.members.count }}</span>
+            <span class="value">подписано</span>
+        </span>
+    </div>
+    <div class="info">
+        <a class="btn btn-success">Подписаться</a>
+    </div>
+</div>

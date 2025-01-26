@@ -2,10 +2,11 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, RedirectView, TemplateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Count
 
 from Interests.forms import InterestForm
 from Interests.models import Interest
-from Interests.services import find_similar_users, weighted_random_choice
+from Interests.utils import find_similar_users, weighted_random_choice
 from users.models import User
 
 
@@ -32,6 +33,11 @@ class InterestDelete(DeleteView):
 
 class InterestListView(ListView):
     model = Interest
+
+    def get_queryset(self):
+        return super().get_queryset().annotate(
+            related_count=Count('members')
+        ).order_by('-related_count')
 
 
 class InterestDetailView(DetailView):
