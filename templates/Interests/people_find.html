@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load my_tags %}
+{% block content %}
+    <div class="choose">
+        <a class="area deny" href="{% url 'interests:deny-user' %}"><div class="deny-mark"></div></a>
+        {% include 'includes/user_detail.html' with object=found_user %}
+        <a class="area approve" href="{% url 'interests:approve-user' %}"><div class="approve-mark"></div></a>
+    </div>
+{% endblock %}

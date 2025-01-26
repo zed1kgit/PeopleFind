@@ -1,0 +1,899 @@
+[
+  {
+    "model": "admin.logentry",
+    "pk": 1,
+    "fields": {
+      "action_time": "2025-01-18T16:26:39.184Z",
+      "user": 1,
+      "content_type": 7,
+      "object_id": "1",
+      "object_repr": "Игры",
+      "action_flag": 2,
+      "change_message": "[{\"changed\": {\"fields\": [\"Members\"]}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 2,
+    "fields": {
+      "action_time": "2025-01-18T16:32:19.313Z",
+      "user": 1,
+      "content_type": 7,
+      "object_id": "1",
+      "object_repr": "Игры",
+      "action_flag": 2,
+      "change_message": "[{\"changed\": {\"fields\": [\"Members\"]}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 3,
+    "fields": {
+      "action_time": "2025-01-18T16:32:27.852Z",
+      "user": 1,
+      "content_type": 7,
+      "object_id": "1",
+      "object_repr": "Игры",
+      "action_flag": 2,
+      "change_message": "[{\"changed\": {\"fields\": [\"Members\"]}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 4,
+    "fields": {
+      "action_time": "2025-01-20T23:26:48.555Z",
+      "user": 1,
+      "content_type": 7,
+      "object_id": "1",
+      "object_repr": "Игры",
+      "action_flag": 2,
+      "change_message": "[{\"changed\": {\"fields\": [\"\\u041b\\u043e\\u0433\\u043e\\u0442\\u0438\\u043f\"]}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 5,
+    "fields": {
+      "action_time": "2025-01-24T01:35:11.044Z",
+      "user": 1,
+      "content_type": 6,
+      "object_id": "5",
+      "object_repr": "user1@gmail.com",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 6,
+    "fields": {
+      "action_time": "2025-01-24T01:35:28.671Z",
+      "user": 1,
+      "content_type": 6,
+      "object_id": "6",
+      "object_repr": "user2@gmail.com",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 7,
+    "fields": {
+      "action_time": "2025-01-24T01:35:52.594Z",
+      "user": 1,
+      "content_type": 6,
+      "object_id": "7",
+      "object_repr": "user3@gmail.com",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 8,
+    "fields": {
+      "action_time": "2025-01-24T01:36:02.965Z",
+      "user": 1,
+      "content_type": 6,
+      "object_id": "8",
+      "object_repr": "user4@gmail.com",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 9,
+    "fields": {
+      "action_time": "2025-01-24T01:37:01.937Z",
+      "user": 1,
+      "content_type": 7,
+      "object_id": "2",
+      "object_repr": "Рисование",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 10,
+    "fields": {
+      "action_time": "2025-01-24T01:37:31.992Z",
+      "user": 1,
+      "content_type": 7,
+      "object_id": "3",
+      "object_repr": "Спорт",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 11,
+    "fields": {
+      "action_time": "2025-01-24T01:38:11.212Z",
+      "user": 1,
+      "content_type": 7,
+      "object_id": "4",
+      "object_repr": "Программирование",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 12,
+    "fields": {
+      "action_time": "2025-01-24T01:38:45.022Z",
+      "user": 1,
+      "content_type": 7,
+      "object_id": "5",
+      "object_repr": "Фильмы",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 13,
+    "fields": {
+      "action_time": "2025-01-24T01:38:54.692Z",
+      "user": 1,
+      "content_type": 7,
+      "object_id": "1",
+      "object_repr": "Игры",
+      "action_flag": 2,
+      "change_message": "[{\"changed\": {\"fields\": [\"Members\"]}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 14,
+    "fields": {
+      "action_time": "2025-01-24T01:40:16.174Z",
+      "user": 1,
+      "content_type": 6,
+      "object_id": "7",
+      "object_repr": "user3@gmail.com",
+      "action_flag": 2,
+      "change_message": "[{\"changed\": {\"fields\": [\"Password\"]}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 15,
+    "fields": {
+      "action_time": "2025-01-24T01:40:19.711Z",
+      "user": 1,
+      "content_type": 6,
+      "object_id": "5",
+      "object_repr": "user1@gmail.com",
+      "action_flag": 2,
+      "change_message": "[{\"changed\": {\"fields\": [\"Password\"]}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 16,
+    "fields": {
+      "action_time": "2025-01-24T01:40:22.895Z",
+      "user": 1,
+      "content_type": 6,
+      "object_id": "6",
+      "object_repr": "user2@gmail.com",
+      "action_flag": 2,
+      "change_message": "[{\"changed\": {\"fields\": [\"Password\"]}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 17,
+    "fields": {
+      "action_time": "2025-01-24T01:40:26.760Z",
+      "user": 1,
+      "content_type": 6,
+      "object_id": "8",
+      "object_repr": "user4@gmail.com",
+      "action_flag": 2,
+      "change_message": "[{\"changed\": {\"fields\": [\"Password\"]}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 18,
+    "fields": {
+      "action_time": "2025-01-25T03:08:19.335Z",
+      "user": 1,
+      "content_type": 9,
+      "object_id": "1",
+      "object_repr": "CheckedUsers object (1)",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 19,
+    "fields": {
+      "action_time": "2025-01-25T03:25:22.237Z",
+      "user": 1,
+      "content_type": 6,
+      "object_id": "5",
+      "object_repr": "user1@gmail.com",
+      "action_flag": 2,
+      "change_message": "[{\"changed\": {\"fields\": [\"Denied users\"]}}]"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 1,
+    "fields": {
+      "name": "Can add log entry",
+      "content_type": 1,
+      "codename": "add_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 2,
+    "fields": {
+      "name": "Can change log entry",
+      "content_type": 1,
+      "codename": "change_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 3,
+    "fields": {
+      "name": "Can delete log entry",
+      "content_type": 1,
+      "codename": "delete_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 4,
+    "fields": {
+      "name": "Can view log entry",
+      "content_type": 1,
+      "codename": "view_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 5,
+    "fields": {
+      "name": "Can add permission",
+      "content_type": 2,
+      "codename": "add_permission"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 6,
+    "fields": {
+      "name": "Can change permission",
+      "content_type": 2,
+      "codename": "change_permission"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 7,
+    "fields": {
+      "name": "Can delete permission",
+      "content_type": 2,
+      "codename": "delete_permission"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 8,
+    "fields": {
+      "name": "Can view permission",
+      "content_type": 2,
+      "codename": "view_permission"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 9,
+    "fields": {
+      "name": "Can add group",
+      "content_type": 3,
+      "codename": "add_group"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 10,
+    "fields": {
+      "name": "Can change group",
+      "content_type": 3,
+      "codename": "change_group"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 11,
+    "fields": {
+      "name": "Can delete group",
+      "content_type": 3,
+      "codename": "delete_group"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 12,
+    "fields": {
+      "name": "Can view group",
+      "content_type": 3,
+      "codename": "view_group"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 13,
+    "fields": {
+      "name": "Can add content type",
+      "content_type": 4,
+      "codename": "add_contenttype"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 14,
+    "fields": {
+      "name": "Can change content type",
+      "content_type": 4,
+      "codename": "change_contenttype"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 15,
+    "fields": {
+      "name": "Can delete content type",
+      "content_type": 4,
+      "codename": "delete_contenttype"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 16,
+    "fields": {
+      "name": "Can view content type",
+      "content_type": 4,
+      "codename": "view_contenttype"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 17,
+    "fields": {
+      "name": "Can add session",
+      "content_type": 5,
+      "codename": "add_session"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 18,
+    "fields": {
+      "name": "Can change session",
+      "content_type": 5,
+      "codename": "change_session"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 19,
+    "fields": {
+      "name": "Can delete session",
+      "content_type": 5,
+      "codename": "delete_session"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 20,
+    "fields": {
+      "name": "Can view session",
+      "content_type": 5,
+      "codename": "view_session"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 21,
+    "fields": {
+      "name": "Can add User",
+      "content_type": 6,
+      "codename": "add_user"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 22,
+    "fields": {
+      "name": "Can change User",
+      "content_type": 6,
+      "codename": "change_user"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 23,
+    "fields": {
+      "name": "Can delete User",
+      "content_type": 6,
+      "codename": "delete_user"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 24,
+    "fields": {
+      "name": "Can view User",
+      "content_type": 6,
+      "codename": "view_user"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 25,
+    "fields": {
+      "name": "Can add interest",
+      "content_type": 7,
+      "codename": "add_interest"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 26,
+    "fields": {
+      "name": "Can change interest",
+      "content_type": 7,
+      "codename": "change_interest"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 27,
+    "fields": {
+      "name": "Can delete interest",
+      "content_type": 7,
+      "codename": "delete_interest"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 28,
+    "fields": {
+      "name": "Can view interest",
+      "content_type": 7,
+      "codename": "view_interest"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 29,
+    "fields": {
+      "name": "Can add checked user",
+      "content_type": 8,
+      "codename": "add_checkeduser"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 30,
+    "fields": {
+      "name": "Can change checked user",
+      "content_type": 8,
+      "codename": "change_checkeduser"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 31,
+    "fields": {
+      "name": "Can delete checked user",
+      "content_type": 8,
+      "codename": "delete_checkeduser"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 32,
+    "fields": {
+      "name": "Can view checked user",
+      "content_type": 8,
+      "codename": "view_checkeduser"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 33,
+    "fields": {
+      "name": "Can add checked users",
+      "content_type": 9,
+      "codename": "add_checkedusers"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 34,
+    "fields": {
+      "name": "Can change checked users",
+      "content_type": 9,
+      "codename": "change_checkedusers"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 35,
+    "fields": {
+      "name": "Can delete checked users",
+      "content_type": 9,
+      "codename": "delete_checkedusers"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 36,
+    "fields": {
+      "name": "Can view checked users",
+      "content_type": 9,
+      "codename": "view_checkedusers"
+    }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 1,
+    "fields": {
+      "app_label": "admin",
+      "model": "logentry"
+    }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 2,
+    "fields": {
+      "app_label": "auth",
+      "model": "permission"
+    }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 3,
+    "fields": {
+      "app_label": "auth",
+      "model": "group"
+    }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 4,
+    "fields": {
+      "app_label": "contenttypes",
+      "model": "contenttype"
+    }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 5,
+    "fields": {
+      "app_label": "sessions",
+      "model": "session"
+    }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 6,
+    "fields": {
+      "app_label": "users",
+      "model": "user"
+    }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 7,
+    "fields": {
+      "app_label": "Interests",
+      "model": "interest"
+    }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 8,
+    "fields": {
+      "app_label": "users",
+      "model": "checkeduser"
+    }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 9,
+    "fields": {
+      "app_label": "users",
+      "model": "checkedusers"
+    }
+  },
+  {
+    "model": "sessions.session",
+    "pk": "jgeolw8na556jeqt4j1j3xjk8kbzjjjk",
+    "fields": {
+      "session_data": ".eJxVjDsOwjAQRO_iGlnEn0WmpOcM1tq7iwPIluKkirg7iZQCypn3ZlYVcZlLXDpPcSR1VaBOv13C_OK6A3pifTSdW52nMeld0Qft-t6I37fD_Tso2Mu2DhIYAAYrSJ6FLbGghIFNckQOIJzJumDE8wUzpyy4pRSsN0AWQH2-GEg45Q:1tbW6w:g4SS7D28VtzsOagO1ebEX3TMKhYunrD4N4hTRHO8m0E",
+      "expire_date": "2025-02-08T02:41:26.906Z"
+    }
+  },
+  {
+    "model": "sessions.session",
+    "pk": "pf354bk9vb73n12wgkv2w6d516dmhk73",
+    "fields": {
+      "session_data": ".eJxVjDsOwjAQRO_iGlnEn0WmpOcM1tq7iwPIluKkirg7iZQCypn3ZlYVcZlLXDpPcSR1VaBOv13C_OK6A3pifTSdW52nMeld0Qft-t6I37fD_Tso2Mu2DhIYAAYrSJ6FLbGghIFNckQOIJzJumDE8wUzpyy4pRSsN0AWQH2-GEg45Q:1tb8in:998wfBnMJil8bbdWyq7DA-8hFdlyo5X8HYjrESC9Z5k",
+      "expire_date": "2025-02-07T01:42:57.302Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$870000$oFdJBhZhspHhWcxcEcvuuM$GV4BC8Cxtz0PeJKruv4k9o04TDAYOh0JwUk9eOM3aCM=",
+      "last_login": "2025-01-25T03:25:09.251Z",
+      "is_superuser": true,
+      "first_name": "",
+      "last_name": "",
+      "is_staff": true,
+      "date_joined": "2025-01-18T13:59:46.526Z",
+      "email": "admin@gmail.com",
+      "role": "admin",
+      "name": "Admin",
+      "slug": "admin",
+      "description": null,
+      "avatar": "",
+      "is_active": true,
+      "groups": [],
+      "user_permissions": [],
+      "approved_users": [],
+      "denied_users": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$870000$oajOWuk0330H5x38FdSv2E$oSQlKogoMEkVyXGpyaLsEyUecC+dN9MtfRChKbNMiQo=",
+      "last_login": "2025-01-24T01:22:32.866Z",
+      "is_superuser": false,
+      "first_name": "",
+      "last_name": "",
+      "is_staff": true,
+      "date_joined": "2025-01-18T13:59:46.924Z",
+      "email": "moderator@gmail.com",
+      "role": "moderator",
+      "name": "Moderator",
+      "slug": "moderator",
+      "description": null,
+      "avatar": "",
+      "is_active": true,
+      "groups": [],
+      "user_permissions": [],
+      "approved_users": [],
+      "denied_users": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$870000$VGjeGI7oLZlnMRLHzYlaPI$LPjkmtng6q7wSr9YY9VRo2IME0P/A5HDow9HBNIxfGc=",
+      "last_login": "2025-01-24T01:20:27.333Z",
+      "is_superuser": false,
+      "first_name": "",
+      "last_name": "",
+      "is_staff": false,
+      "date_joined": "2025-01-18T13:59:47.277Z",
+      "email": "user@gmail.com",
+      "role": "user",
+      "name": "User",
+      "slug": "user",
+      "description": null,
+      "avatar": "",
+      "is_active": true,
+      "groups": [],
+      "user_permissions": [],
+      "approved_users": [],
+      "denied_users": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 5,
+    "fields": {
+      "password": "pbkdf2_sha256$870000$oFdJBhZhspHhWcxcEcvuuM$GV4BC8Cxtz0PeJKruv4k9o04TDAYOh0JwUk9eOM3aCM=",
+      "last_login": "2025-01-25T03:25:38.194Z",
+      "is_superuser": false,
+      "first_name": "",
+      "last_name": "",
+      "is_staff": false,
+      "date_joined": "2025-01-24T01:32:01Z",
+      "email": "user1@gmail.com",
+      "role": "user",
+      "name": "user1",
+      "slug": "user1",
+      "description": "user1",
+      "avatar": "",
+      "is_active": true,
+      "groups": [],
+      "user_permissions": [],
+      "approved_users": [],
+      "denied_users": [
+        8
+      ]
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 6,
+    "fields": {
+      "password": "pbkdf2_sha256$870000$oFdJBhZhspHhWcxcEcvuuM$GV4BC8Cxtz0PeJKruv4k9o04TDAYOh0JwUk9eOM3aCM=",
+      "last_login": "2025-01-25T03:05:18.897Z",
+      "is_superuser": false,
+      "first_name": "",
+      "last_name": "",
+      "is_staff": false,
+      "date_joined": "2025-01-24T01:35:15Z",
+      "email": "user2@gmail.com",
+      "role": "user",
+      "name": "user2",
+      "slug": "user2",
+      "description": "user2",
+      "avatar": "",
+      "is_active": true,
+      "groups": [],
+      "user_permissions": [],
+      "approved_users": [],
+      "denied_users": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 7,
+    "fields": {
+      "password": "pbkdf2_sha256$870000$oFdJBhZhspHhWcxcEcvuuM$GV4BC8Cxtz0PeJKruv4k9o04TDAYOh0JwUk9eOM3aCM=",
+      "last_login": null,
+      "is_superuser": false,
+      "first_name": "",
+      "last_name": "",
+      "is_staff": false,
+      "date_joined": "2025-01-24T01:35:28Z",
+      "email": "user3@gmail.com",
+      "role": "user",
+      "name": "user3",
+      "slug": "user3",
+      "description": "user3",
+      "avatar": "",
+      "is_active": true,
+      "groups": [],
+      "user_permissions": [],
+      "approved_users": [],
+      "denied_users": []
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 8,
+    "fields": {
+      "password": "pbkdf2_sha256$870000$oFdJBhZhspHhWcxcEcvuuM$GV4BC8Cxtz0PeJKruv4k9o04TDAYOh0JwUk9eOM3aCM=",
+      "last_login": null,
+      "is_superuser": false,
+      "first_name": "",
+      "last_name": "",
+      "is_staff": false,
+      "date_joined": "2025-01-24T01:35:52Z",
+      "email": "user4@gmail.com",
+      "role": "user",
+      "name": "user4",
+      "slug": "user4",
+      "description": "user4",
+      "avatar": "",
+      "is_active": true,
+      "groups": [],
+      "user_permissions": [],
+      "approved_users": [],
+      "denied_users": [
+        5
+      ]
+    }
+  },
+  {
+    "model": "Interests.interest",
+    "pk": 1,
+    "fields": {
+      "name": "Игры",
+      "logo": "interests/9086413a443d6239301d96c45baf1215.jpg",
+      "description": "Играть в игры",
+      "members": [
+        2,
+        3,
+        8
+      ]
+    }
+  },
+  {
+    "model": "Interests.interest",
+    "pk": 2,
+    "fields": {
+      "name": "Рисование",
+      "logo": "",
+      "description": "Любители рисовать",
+      "members": [
+        7,
+        8
+      ]
+    }
+  },
+  {
+    "model": "Interests.interest",
+    "pk": 3,
+    "fields": {
+      "name": "Спорт",
+      "logo": "",
+      "description": "Те кто любит заниматься спортом",
+      "members": [
+        6,
+        7
+      ]
+    }
+  },
+  {
+    "model": "Interests.interest",
+    "pk": 4,
+    "fields": {
+      "name": "Программирование",
+      "logo": "",
+      "description": "Люди которые увлекаются программированием",
+      "members": [
+        3,
+        5
+      ]
+    }
+  },
+  {
+    "model": "Interests.interest",
+    "pk": 5,
+    "fields": {
+      "name": "Фильмы",
+      "logo": "",
+      "description": "Если тебе нравиться смотреть фильмы",
+      "members": [
+        5,
+        6
+      ]
+    }
+  }
+]

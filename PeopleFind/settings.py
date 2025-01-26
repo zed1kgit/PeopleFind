@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-y!4m^4e$&0t^t5376p27==4p$_06xf^c6wkb*wh86239wz%)$%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.1.234', 'localhost']
 
 
 # Application definition
@@ -150,3 +150,14 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+CACHE_ENABLED = os.getenv('CACHE_ENABLED') == True
+if CACHE_ENABLED:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'LOCATION': os.getenv('CACHE_LOCATION'),
+        }
+    }
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'

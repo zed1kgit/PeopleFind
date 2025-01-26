@@ -1,7 +1,6 @@
-from audioop import reverse
-
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.urls import reverse_lazy
 
 NULLABLE = {'blank': True, 'null': True}
 
@@ -14,6 +13,8 @@ class UserRoles(models.TextChoices):
 
 class User(AbstractUser):
     username = None
+    first_name = None
+    last_name = None
     email = models.EmailField(unique=True, verbose_name='Email')
     role = models.CharField(max_length=9, choices=UserRoles.choices, default=UserRoles.USER)
     name = models.CharField(blank=False, max_length=16, verbose_name='Отображаемое имя')
@@ -21,6 +22,8 @@ class User(AbstractUser):
     description = models.CharField(max_length=350, verbose_name='Описание', **NULLABLE)
     avatar = models.ImageField(upload_to='users/', verbose_name='Аватар', **NULLABLE)
     is_active = models.BooleanField(default=True, verbose_name='Active')
+    approved_users = models.ManyToManyField('self', blank=True)
+    denied_users = models.ManyToManyField('self', blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -29,7 +32,7 @@ class User(AbstractUser):
         return f'{self.email}'
 
     def get_absolute_url(self):
-        return reverse('users:profile', kwargs={'slug': self.slug})
+        return reverse_lazy('users:profile', kwargs={'slug': self.slug})
 
     class Meta:
         verbose_name = 'User'

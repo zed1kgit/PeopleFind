@@ -1,28 +1,4 @@
 {% extends 'base.html' %}
-{% load my_tags %}
 {% block content %}
-    <div>
-        <div class="profile-head">
-            <div class="user-avatar">
-                <img class=""
-                     src="{{ object.avatar|user_media }}" width="200" height="200"
-                     alt="{{ object.name }}"
-                     title="{{ object.name }}">
-            </div>
-            <h1 class="user-name">{{ object.name }}</h1>
-            <div class="card-body">
-                <span class="card-text">Почта: {{ object.email }}</span><br>
-                <span class="card-text">О себе: {{ object.description|default:"Информация отсутствует." }}</span><br>
-            </div>
-        </div>
-        <div class="block">
-            <div class="headline">интересы</div>
-            <div class="interests">
-                {% for interest in object.interests.all %}
-                    {% include 'includes/interest_inc.html' with object=interest %}
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-
+    {% include 'includes/user_detail.html' %}
 {% endblock %}
