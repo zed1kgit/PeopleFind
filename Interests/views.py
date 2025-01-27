@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, RedirectView, TemplateView
 from django.urls import reverse_lazy
@@ -89,3 +90,14 @@ class ApproveSimilarUserView(LoginRequiredMixin, RedirectView):
         current_user.approved_users.add(found_user)
         return reverse_lazy('interests:find-user')
 
+
+class ToggleInterestView(LoginRequiredMixin, RedirectView):
+    def post(self, request, *args, **kwargs):
+        interest_id = kwargs.get('pk')
+        interest = Interest.objects.get(id=interest_id)
+        user = request.user
+        if user in interest.members.all():
+            interest.members.remove(user)
+        else:
+            interest.members.add(user)
+        return JsonResponse({'success': True})

@@ -72,6 +72,13 @@ section a:hover {
     color: rgba(45, 137, 210, 1);
 }
 
+h1 {
+    font-size: 30px;
+    font-weight: normal;
+    margin: 0;
+}
+
+
 .top_menu {
     position: sticky;
     top: 0;
@@ -208,6 +215,49 @@ section a:hover {
     margin-bottom: 10px;
 }
 
+.headline > a {
+    overflow: visible;
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: inherit;
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    padding: 2px 15px 0;
+    line-height: 1;
+    border-radius: 13px;
+    transition: 0.2s ease, -webkit-0 .2s ease, margin 0s, padding 0s, opacity 0s, color 0.2s, font-size 0s, width 0s, height 0s, top 0s, bottom 0s, border 0s, border-radius 0s, left 0s, right 0s, line-height 0s, min-height 0s;
+}
+
+.headline > a:hover {
+    color: rgba(45, 137, 210, 1);
+    background: rgba(105, 91, 144, 0.15);
+    border: none;
+}
+
+.headline > a:before {
+    color: rgba(167, 148, 210, 1);
+    position: absolute;
+    top: 0;
+    right: 10px;
+    background: linear-gradient(270deg, rgba(172, 162, 193, 1), rgba(172, 162, 193, 0.3));
+    width: 8px;
+    margin: 10px 1px;
+    height: 8px;
+    border-radius: 50%;
+    font-size: 0;
+    transition: 0.2s ease, -webkit-0 .2s ease, width 0s, margin 0s, padding 0s, font-size 0s, height 0s, top 0s, left 0s, line-height 0s, min-height 0s;
+    font-family: Symbols;
+    content: "";
+}
+
+.headline > a:hover:before {
+    color: rgba(45, 137, 210, 1);
+    background: linear-gradient(270deg, rgba(45, 137, 210, 1), rgba(45, 137, 210, 0.3));
+}
+
 .user-name {
     border-bottom: none;
     color: rgba(238, 254, 255, 1);
@@ -263,7 +313,7 @@ section a:hover {
     border-radius: 6px;
     box-shadow: 0 0 20px rgba(105, 91, 144, 0.5);
     max-width: 100%;
-    max-height: 128px;
+    max-height: 215px;
 }
 
 .count {
@@ -362,7 +412,7 @@ section a:hover {
     align-items: stretch;
 }
 
-.choose>div {
+.choose > div {
     width: 70%;
 }
 
@@ -418,7 +468,7 @@ section a:hover {
     margin: 5px 5px;
     float: left;
     position: relative;
-    width: 20%;
+    width: 23%;
 }
 
 .interest-name-logo {
@@ -513,4 +563,8 @@ section a:hover {
 
 .value {
     color: rgba(172, 162, 193, 1);
+}
+
+.menu .btn {
+    width: 100%;
 }

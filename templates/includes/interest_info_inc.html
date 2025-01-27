@@ -12,6 +12,16 @@
         </span>
     </div>
     <div class="info">
-        <a class="btn btn-success">Подписаться</a>
+        {% if user.is_authenticated %}
+            <a class="subscribe btn {% if user in object.members.all %}btn-danger{% else %}btn-success{% endif %}"
+               data-url="{% url 'interests:toggle-interest' object.id %}"
+               data-interest-id="{{ object.id }}"
+               data-is-subscribed="{% if user in object.members.all %}true{% else %}false{% endif %}">
+                {% if user in object.members.all %}
+                    Отписаться
+                {% else %}
+                    Подписаться
+                {% endif %} </a>
+        {% endif %}
     </div>
 </div>

@@ -1,9 +1,11 @@
+from django.db.models import Count
 from django.shortcuts import render
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.views.generic import CreateView, UpdateView, ListView, DetailView, RedirectView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from Interests.models import Interest
 from users.forms import UserRegisterForm, UserLoginForm, UserUpdateForm, UserForm
 from users.models import User
 
@@ -12,6 +14,9 @@ def index(request):
     context = {
         "title": "PeopleFind",
         "nav_title": "Главная",
+        "interests_objects_list": Interest.objects.annotate(
+            related_count=Count('members')
+        ).order_by('-related_count')[:4],
     }
     return render(request, 'index.html', context)
 
@@ -34,6 +39,12 @@ class UserLoginView(LoginView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Авторизация'
         return context
+
+    def get_default_redirect_url(self):
+        next_page = self.kwargs.get('next')
+        if next_page:
+            return next_page
+        return reverse_lazy('users:index')
 
 
 class UserLogoutView(LogoutView):

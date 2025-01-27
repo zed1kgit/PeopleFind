@@ -1,7 +1,15 @@
 {% extends 'base.html' %}
 {% load my_tags %}
 {% block content %}
+    <div class="block">
+        <div class="headline"><a href="{% url 'interests:list' %}">интересы</a></div>
+        <div class="interests">
+            {% for interest in interests_objects_list %}
+                {% include 'includes/interest_info_inc.html' with object=interest %}
+            {% endfor %}
+        </div>
+    </div>
     <div>
-    <a class="btn btn-primary" href="{% url 'interests:find-user' %}">ПОИСК</a>
+        <a class="btn btn-primary" href="{% url 'interests:find-user' %}">ПОИСК</a>
     </div>
 {% endblock %}
