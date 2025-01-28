@@ -34,10 +34,9 @@ $(document).ready(function () {
             }
         });
     });
-});
 
-$(document).ready(function () {
     let area = $('.area');
+
     area.on('click', function (event) {
         event.preventDefault();
 
@@ -54,7 +53,11 @@ $(document).ready(function () {
             },
             success: function (response) {
                 if (response.success) {
-                    updateUserDetail(response.new_object, response.new_object_id);
+                    if (response.new_object_id === 'none') {
+                        window.location.href = '/interests/user-found'
+                    } else {
+                        updateUserDetail(response.new_object, response.new_object_id);
+                    }
                 } else {
                     alert(response.message);
                 }
@@ -68,7 +71,9 @@ $(document).ready(function () {
     function updateUserDetail(newObjectHtml, objectId) {
         $('#user-detail').html(newObjectHtml);
         area.each(function (_, el) {
+            $(el).data('user-id', objectId)
             $(el).attr('data-user-id', objectId)
         });
     }
 });
+

@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, RedirectView, TemplateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -65,6 +65,7 @@ class FoundSimilarUserView(LoginRequiredMixin, TemplateView):
     def get_template_names(self):
         found_user = self.request.session.get('found-user', {})
         if found_user:
+            self.request.session['found-user'] = None
             return 'Interests/people_find.html'
         else:
             return 'Interests/not_found.html'
@@ -76,9 +77,12 @@ class DenySimilarUserView(LoginRequiredMixin, RedirectView):
         added_user = get_object_or_404(User, pk=request.POST.get('user-id'))
         current_user.denied_users.add(added_user)
         founded_user = find_people(current_user)
-        new_object = render(request, 'includes/user_detail.html', {'object': founded_user}).content.decode()
-        response = {'success': True, 'new_object': new_object, 'new_object_id': founded_user.pk}
-        return JsonResponse(response)
+        if founded_user:
+            new_object = render(request, 'includes/user_detail.html', {'object': founded_user}).content.decode()
+            response = {'success': True, 'new_object': new_object, 'new_object_id': founded_user.pk}
+            return JsonResponse(response)
+        else:
+            return JsonResponse({'success': True, 'new_object_id': 'none'})
 
 
 class ApproveSimilarUserView(LoginRequiredMixin, RedirectView):
@@ -87,9 +91,12 @@ class ApproveSimilarUserView(LoginRequiredMixin, RedirectView):
         added_user = get_object_or_404(User, pk=request.POST.get('user-id'))
         current_user.approved_users.add(added_user)
         founded_user = find_people(current_user)
-        new_object = render(request, 'includes/user_detail.html', {'object': founded_user}).content.decode()
-        response = {'success': True, 'new_object': new_object, 'new_object_id': founded_user.pk}
-        return JsonResponse(response)
+        if founded_user:
+            new_object = render(request, 'includes/user_detail.html', {'object': founded_user}).content.decode()
+            response = {'success': True, 'new_object': new_object, 'new_object_id': founded_user.pk}
+            return JsonResponse(response)
+        else:
+            return JsonResponse({'success': True, 'new_object_id': 'none'})
 
 
 class ToggleInterestView(LoginRequiredMixin, RedirectView):
