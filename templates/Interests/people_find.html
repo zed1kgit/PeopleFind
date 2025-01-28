@@ -2,8 +2,18 @@
 {% load my_tags %}
 {% block content %}
     <div class="choose">
-        <a class="area deny" href="{% url 'interests:deny-user' %}"><div class="deny-mark"></div></a>
-        {% include 'includes/user_detail.html' with object=found_user %}
-        <a class="area approve" href="{% url 'interests:approve-user' %}"><div class="approve-mark"></div></a>
+        <a class="area deny"
+           data-url="{% url 'interests:deny-user' %}"
+           data-user-id="{{ found_user.pk }}">
+            <div class="deny-mark"></div>
+        </a>
+        <div id="user-detail">
+            {% include 'includes/user_detail.html' with object=found_user %}
+        </div>
+        <a class="area approve"
+           data-url="{% url 'interests:approve-user' %}"
+           data-user-id="{{ found_user.pk }}">
+            <div class="approve-mark"></div>
+        </a>
     </div>
 {% endblock %}

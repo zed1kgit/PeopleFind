@@ -1,0 +1,7 @@
+{% load my_tags %}
+<div class="min-user column">
+    <a class="avatar" href="{% url 'users:profile' object.slug %}" title="{{ object.name }}">
+        <img src="{{ object.avatar|user_media }}" alt="{{ object.name }}" width="80px" height="80px">
+    </a>
+    <a class="name" href="{% url 'users:profile' object.slug %}" title="{{ object.name }}">{{ object.name }}</a>
+</div>

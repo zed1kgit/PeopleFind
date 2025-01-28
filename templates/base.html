@@ -34,6 +34,7 @@
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
             {% if user.is_authenticated %}
                 <li><a class="dropdown-item" href="{% url 'users:profile-redirect' %}">Профиль</a></li>
+                <li><a class="dropdown-item" href="{% url 'users:mutual-list' %}">Взаимные пользователи</a></li>
                 <li>
                     <form method="post" action="{% url 'users:logout' %}">
                         {% csrf_token %}

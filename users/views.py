@@ -66,3 +66,17 @@ class UserIdRedirectView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         user_slug = User.objects.get(pk=self.kwargs['pk']).slug
         return reverse_lazy('users:profile', kwargs={'slug': user_slug})
+
+
+class MutualUsersListView(LoginRequiredMixin, ListView):
+    model = User
+    template_name = 'users/mutual_users_list.html'
+
+    def get_queryset(self):
+        user = self.request.user
+        approved_users = user.approved_users.all()
+        mutual_users = []
+        for approved_user in approved_users:
+            if approved_user.approved_users.all().contains(user):
+                mutual_users.append(approved_user)
+        return mutual_users

@@ -7,7 +7,7 @@ from django.db.models import Count
 
 from Interests.forms import InterestForm
 from Interests.models import Interest
-from Interests.utils import find_similar_users, weighted_random_choice
+from Interests.utils import find_similar_users, weighted_random_choice, find_people
 from users.models import User
 
 
@@ -48,13 +48,8 @@ class InterestDetailView(DetailView):
 class FindSimilarUser(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         current_user = self.request.user
-        similar_users_list = find_similar_users(current_user)
-        if len(similar_users_list) > 0:
-            found_user_pk = weighted_random_choice(similar_users_list)
-            found_user = User.objects.get(pk=found_user_pk)
-            self.request.session['found-user'] = found_user
-        else:
-            self.request.session['found-user'] = None
+        founded_user = find_people(current_user)
+        self.request.session['found-user'] = founded_user
         return reverse_lazy('interests:user-found')
 
 
@@ -76,19 +71,25 @@ class FoundSimilarUserView(LoginRequiredMixin, TemplateView):
 
 
 class DenySimilarUserView(LoginRequiredMixin, RedirectView):
-    def get_redirect_url(self, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         current_user = self.request.user
-        found_user = self.request.session.get('found-user', {})
-        current_user.denied_users.add(found_user)
-        return reverse_lazy('interests:find-user')
+        added_user = get_object_or_404(User, pk=request.POST.get('user-id'))
+        current_user.denied_users.add(added_user)
+        founded_user = find_people(current_user)
+        new_object = render(request, 'includes/user_detail.html', {'object': founded_user}).content.decode()
+        response = {'success': True, 'new_object': new_object, 'new_object_id': founded_user.pk}
+        return JsonResponse(response)
 
 
 class ApproveSimilarUserView(LoginRequiredMixin, RedirectView):
-    def get_redirect_url(self, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         current_user = self.request.user
-        found_user = self.request.session.get('found-user', {})
-        current_user.approved_users.add(found_user)
-        return reverse_lazy('interests:find-user')
+        added_user = get_object_or_404(User, pk=request.POST.get('user-id'))
+        current_user.approved_users.add(added_user)
+        founded_user = find_people(current_user)
+        new_object = render(request, 'includes/user_detail.html', {'object': founded_user}).content.decode()
+        response = {'success': True, 'new_object': new_object, 'new_object_id': founded_user.pk}
+        return JsonResponse(response)
 
 
 class ToggleInterestView(LoginRequiredMixin, RedirectView):

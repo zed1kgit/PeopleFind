@@ -154,11 +154,6 @@ h1 {
     z-index: 1;
 }
 
-.test {
-    min-height: 2000px;
-    padding-top: 5px;
-}
-
 .form-control {
     max-width: 560px;
 }
@@ -347,7 +342,6 @@ h1 {
 
 .user.avatar img {
     border-radius: 50%;
-
     height: 35px;
     width: 35px;
 }
@@ -422,6 +416,7 @@ h1 {
     border-radius: 10px;
     transition: 0s ease-out, box-shadow .2s ease-out, transform .2s ease-out;
     position: relative;
+    cursor: pointer;
 }
 
 .area:hover {
@@ -568,3 +563,56 @@ h1 {
 .menu .btn {
     width: 100%;
 }
+
+.min-user {
+    display: inline-block;
+}
+
+.min-user img {
+    border-radius: 50%;
+    border: 2px solid rgba(56, 41, 97, 0.6);
+    transition: 0s ease, transform 1s ease, border-color 1s ease;
+    display: block;
+    line-height: 0;
+    margin: 0 auto;
+    max-width: 100%;
+}
+
+.min-user:hover, .min-user .avatar img:hover, .min-user:hover a {
+    color: rgba(45, 137, 210, 1);
+}
+
+.min-user .avatar:hover img {
+    border-color: rgba(45, 137, 210, 1);
+    border-radius: 50%;
+    text-decoration: none;
+}
+
+.min-user .name {
+    color: rgba(238, 254, 255, 1);
+    transition: 1s ease-out, -webkit-1s ease-out, width 0s, margin 0s, padding 0s, font-size 0s, height 0s, top 0s, left 0s, line-height 0s, min-height 0s;
+    text-decoration: none !important;
+    margin: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+    display: block;
+    line-height: 1.65;
+    text-align: center;
+    font-size: 12px;
+}
+
+.c-8 > .column:nth-child(8n+1) {
+    clear: left;
+}
+
+.c-8 > .column {
+    width: calc(12.5% - 10px);
+    margin: 5px;
+    line-height: 1.65;
+    float: left;
+    position: relative;
+}
+
+

@@ -22,8 +22,8 @@ class User(AbstractUser):
     description = models.CharField(max_length=350, verbose_name='Описание', **NULLABLE)
     avatar = models.ImageField(upload_to='users/', verbose_name='Аватар', **NULLABLE)
     is_active = models.BooleanField(default=True, verbose_name='Active')
-    approved_users = models.ManyToManyField('self', blank=True)
-    denied_users = models.ManyToManyField('self', blank=True)
+    approved_users = models.ManyToManyField('self', symmetrical=False, related_name="approved", blank=True)
+    denied_users = models.ManyToManyField('self', symmetrical=False, related_name="denied", blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

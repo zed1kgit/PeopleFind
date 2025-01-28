@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load my_tags %}
+{% block content %}
+    <div>
+        <header class="head">
+            <h1>Пользователи</h1>
+            <p class="clearfix">Список всех пользователей с которыми у вас взаимные одобрение</p>
+        </header>
+        <div class="users">
+            {% for user in object_list %}
+                {% include 'includes/user_info_inc.html' with object=user %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
