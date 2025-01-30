@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, RedirectView, TemplateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -7,7 +7,7 @@ from django.db.models import Count
 
 from Interests.forms import InterestForm
 from Interests.models import Interest
-from Interests.utils import find_similar_users, weighted_random_choice, find_people
+from Interests.utils import find_people
 from users.models import User
 
 

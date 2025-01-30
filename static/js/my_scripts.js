@@ -75,5 +75,27 @@ $(document).ready(function () {
             $(el).attr('data-user-id', objectId)
         });
     }
+
+    $('.new-marker').on('click', function () {
+        let $this = $(this)
+        let notificationId = $this.data('id');
+        $.ajax({
+            url: "/mark_as_read/0/".replace('0', notificationId),
+            type: 'POST',
+            data: {
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(response) {
+                if (response.success) {
+                    $this.addClass('off');
+                } else {
+                    alert('Произошла ошибка при отметке уведомления как прочитанного.');
+                }
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                console.error(textStatus + ': ' + errorThrown);
+            }
+        });
+    });
 });
 

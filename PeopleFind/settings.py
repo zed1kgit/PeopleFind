@@ -29,8 +29,6 @@ SECRET_KEY = 'django-insecure-y!4m^4e$&0t^t5376p27==4p$_06xf^c6wkb*wh86239wz%)$%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.234', 'localhost']
-
 
 # Application definition
 
@@ -161,3 +159,25 @@ if CACHE_ENABLED:
     }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('MS_EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.getenv('MS_EMAIL_PASSWORD')
+
+EMAIL_SERVER = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_ADMIN = EMAIL_HOST_USER
+
+# Celery settings
+
+CELERY_BROKER_URL = f'{os.getenv('CACHE_LOCATION')}/0'
+CELERY_RESULT_BACKEND = f'{os.getenv('CACHE_LOCATION')}/0'
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Europe/Moscow'

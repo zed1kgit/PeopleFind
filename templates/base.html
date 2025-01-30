@@ -24,7 +24,11 @@
             <div class="logo-text">PeopleFind</div>
         </a>
     </div>
-
+    
+    <div class="right">
+    {% if user.is_authenticated %}
+    	<a class="menu-icon notifications" data-count="{{ user.get_unread_notifications_count }}" href="{% url 'users:notifications' %}" title="Уведомления"></a>
+    {% endif %}
     <div class="dropdown">
         <a class="user-dropdown btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
            data-bs-toggle="dropdown" aria-expanded="false">
@@ -45,6 +49,7 @@
                 <li><a class="dropdown-item" href="{% url 'users:login' %}">Войти</a></li>
             {% endif %}
         </ul>
+    </div>
     </div>
 
 </header>

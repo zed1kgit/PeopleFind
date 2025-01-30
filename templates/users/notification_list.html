@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div>
+        <header class="head">
+            <h1>Уведомления</h1>
+            <a href="{% url 'users:profile-redirect' %}">Профиль</a>
+        </header>
+        <div class="headline">Уведомления</div>
+        <div class="block">
+            {% for notification in object_list %}
+                {% include 'includes/notification_inc.html' with object=notification %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

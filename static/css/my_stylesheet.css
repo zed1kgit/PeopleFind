@@ -39,6 +39,34 @@
     src: url("/static/fonts/symbols.woff2") format('woff2');
 }
 
+@keyframes notification {
+    10% {
+        transform: translateX(0px);
+    }
+    12% {
+        transform: translateX(4px);
+    }
+    14% {
+        transform: translateX(-4px);
+    }
+    16% {
+        transform: translateX(4px);
+    }
+    18% {
+        transform: translateX(-4px);
+    }
+    20% {
+        transform: translateX(0px);
+    }
+    50% {
+        transform: scale(1.5);
+    }
+    75% {
+        transform: scale(1);
+    }
+}
+
+
 body {
     color: #fff;
     font-family: "Comfortaa", sans-serif;
@@ -118,8 +146,16 @@ h1 {
     color: #fff;
 }
 
+.dropdown {
+    margin-left: 14px;
+    margin-right: 0;
+    position: relative;
+}
+
 .user-dropdown {
-    color: #fff
+    color: #fff;
+    height: 46px;
+    padding-top: 0.6rem;
 }
 
 .user-dropdown:hover {
@@ -244,7 +280,7 @@ h1 {
     border-radius: 50%;
     font-size: 0;
     transition: 0.2s ease, -webkit-0 .2s ease, width 0s, margin 0s, padding 0s, font-size 0s, height 0s, top 0s, left 0s, line-height 0s, min-height 0s;
-    font-family: Symbols;
+    font-family: "Symbols";
     content: "";
 }
 
@@ -615,4 +651,160 @@ h1 {
     position: relative;
 }
 
+.menu-icon {
+    align-items: center;
+    color: inherit;
+    display: flex;
+    letter-spacing: normal;
+    height: 46px;
+    outline: none;
+    user-select: none;
+    padding: 0 15px;
+    margin-right: 2px;
+    text-decoration: none;
+}
 
+.menu-icon[data-count] {
+    position: relative;
+}
+
+.menu-icon .notifications {
+    cursor: pointer;
+    line-height: inherit;
+}
+
+.menu-icon.notifications:after {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    right: 0;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    margin: 8px 10px 6px;
+    font-size: 18px;
+    font-family: "Comfortaa", sans-serif;
+    color: #ffffff;
+    background: rgba(45, 137, 210, 1);
+    border-radius: 6px;
+    animation: notification 5s ease 1;
+    border: none;
+}
+
+.menu-icon[data-count]:after {
+    content: attr(data-count);
+    line-height: 6px;
+    position: absolute;
+    text-align: center;
+}
+
+.menu-icon[data-count="0"]:after {
+    content: none;
+}
+
+.menu-icon.notifications:before {
+    font-family: "Symbols", sans-serif;
+    text-transform: none;
+    letter-spacing: normal;
+    content: "";
+    font-size: 20px;
+    line-height: 46px;
+    vertical-align: middle;
+}
+
+.right {
+    display: flex;
+}
+
+.notification:first-child {
+    padding-top: 15px;
+    border-top-width: 0;
+}
+
+.notification:last-child {
+    margin-bottom: 0;
+}
+
+.notification {
+    margin: 4px 0;
+    border-top: none;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(193, 202, 218, 0.1);
+}
+
+.notification > .inner {
+    min-height: 58px;
+    position: relative;
+    width: 100%;
+    transition: margin-left 0.25s ease;
+}
+
+.notification > .inner header {
+    margin-bottom: 3px;
+}
+
+.notification > .inner header .notif-name {
+    font-size: 16px;
+    color: rgba(238, 254, 255, 1);
+    top: 2px;
+    position: relative;
+    padding-top: 2px;
+    font-weight: 600;
+}
+
+.notification > .inner header .time {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #7b8084;
+    display: inline;
+    font-size: 11px;
+    padding-left: 10px;
+}
+
+time {
+    color: rgba(172, 162, 193, 1);
+}
+
+.notification > .inner div.body {
+    color: rgba(193, 202, 218, 1);
+}
+
+.new-marker {
+    cursor: pointer;
+    width: 75px;
+    transition: all 0.25s ease;
+    float: right;
+    position: relative;
+    box-sizing: border-box;
+    margin: 2px;
+    color: #e7e7e7;
+    background: unset;
+    box-shadow: none;
+    border: none;
+    border-radius: 8px;
+}
+
+.new-marker:before {
+    border: none;
+    color: #dde6ef;
+    font-size: 12px;
+    content: 'новое';
+    letter-spacing: normal;
+    position: absolute;
+    text-align: center;
+    background-color: #004b80;
+    padding: 4px 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.1s ease;
+    line-height: 16px;
+    border-radius: 8px;
+    box-shadow: none;
+}
+
+.new-marker.off:before {
+    display: none;
+}

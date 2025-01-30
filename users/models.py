@@ -29,7 +29,10 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
 
     def __str__(self):
-        return f'{self.email}'
+        return f'{self.name}'
+
+    def get_unread_notifications_count(self):
+        return self.notifications.filter(viewed=False).count()
 
     def get_absolute_url(self):
         return reverse_lazy('users:profile', kwargs={'slug': self.slug})
@@ -38,3 +41,15 @@ class User(AbstractUser):
         verbose_name = 'User'
         verbose_name_plural = 'Users'
         ordering = ['id']
+
+
+class Notification(models.Model):
+    title = models.CharField(max_length=255)
+    message = models.CharField(max_length=255)
+    date_created = models.DateTimeField(auto_now_add=True)
+    viewed = models.BooleanField(default=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.title}: {self.message}"

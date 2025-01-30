@@ -1,4 +1,5 @@
 from django.db.models import Count
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.views.generic import CreateView, UpdateView, ListView, DetailView, RedirectView
@@ -7,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from Interests.models import Interest
 from users.forms import UserRegisterForm, UserLoginForm, UserUpdateForm, UserForm
-from users.models import User
+from users.models import User, Notification
 
 
 def index(request):
@@ -63,6 +64,7 @@ class SelfProfileView(LoginRequiredMixin, RedirectView):
 
 class UserIdRedirectView(RedirectView):
     model = User
+
     def get_redirect_url(self, *args, **kwargs):
         user_slug = User.objects.get(pk=self.kwargs['pk']).slug
         return reverse_lazy('users:profile', kwargs={'slug': user_slug})
@@ -80,3 +82,18 @@ class MutualUsersListView(LoginRequiredMixin, ListView):
             if approved_user.approved_users.all().contains(user):
                 mutual_users.append(approved_user)
         return mutual_users
+
+
+class NotificationsListView(LoginRequiredMixin, ListView):
+    model = Notification
+
+    def get_queryset(self):
+        return self.request.user.notifications.all().order_by('-date_created')
+
+
+class NotificationReadView(LoginRequiredMixin, RedirectView):
+    def post(self, request, *args, **kwargs):
+        notification = Notification.objects.get(id=kwargs.get('pk'), user=self.request.user)
+        notification.viewed = True
+        notification.save()
+        return JsonResponse({'success': True})
