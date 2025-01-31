@@ -1,7 +1,5 @@
 from django.db.models import Count
 
-import random
-
 from users.models import User
 
 

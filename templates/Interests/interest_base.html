@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load my_tags %}
+{% block content %}
+    <div>
+        <header class="head">
+            <h1>{{ object.name }}</h1>
+            <a href="{% url 'interests:list' %}" id="back">Назад</a>
+        </header>
+        <div class="int-menu">
+            <div class="content">
+                {% block int_content %}
+                {% endblock %}
+            </div>
+            <aside class="menu">
+                <div>
+                    <div class="int-logo">
+                        <img src="{{ object.logo|interest_media }}">
+                    </div>
+                    <div class="block">
+                        {% if user.is_authenticated %}
+                            <button class="subscribe btn {% if user in object.members.all %}btn-danger{% else %}btn-success{% endif %}"
+                                    data-url="{% url 'interests:toggle-interest' object.id %}"
+                                    data-interest-id="{{ object.id }}"
+                                    data-is-subscribed="{% if user in object.members.all %}true{% else %}false{% endif %}">
+                                {% if user in object.members.all %}
+                                    Отписаться
+                                {% else %}
+                                    Подписаться
+                                {% endif %} </button>
+                            <footer></footer>
+                            <a href="{% url 'topics:create' object.pk %}" class="btn btn-primary">Новый топик</a>
+                        {% else %}
+                            <a class="btn btn-primary" href="{% url 'users:login' %}?next={{ request.path }}">Вход для
+                                подписки</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="block">
+                    <div class="headline">участники
+                        <div class="count">{{ object.members.count }}</div>
+                    </div>
+                    <div class="members">
+                        {% for member in object.members.all|slice:":12" %}
+                            {% include 'includes/user_avatar.html' with object=member %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+{% endblock %}

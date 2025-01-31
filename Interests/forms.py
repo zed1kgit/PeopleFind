@@ -13,4 +13,4 @@ class StyleFormMixin:
 class InterestForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = Interest
-        fields = ('name', 'description',)
+        fields = ('logo', 'name', 'description',)

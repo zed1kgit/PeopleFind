@@ -1,0 +1,31 @@
+{% load my_tags %}
+<article class="topic">
+    <div class="inner">
+        <header>
+            <a href="{% url 'topics:detail' pk=object.interest.pk slug=object.slug %}" class="poster"><img
+                    src="{{ object.author.avatar|user_media }}" alt="{{ object.title }}"></a>
+            <div class="name-date"><a class="name"
+                                      href='{% url 'topics:detail' pk=object.interest.pk slug=object.slug %}'
+                                      title="{{ object.title }}">{{ object.title }}</a></div>
+        </header>
+        <div class="status-line">
+            <div class="section main"><span class="comments-count">{{ object.comments.count }}</span></div>
+            <div class="section created_at">
+                <time datetime="{{ object.created_at }}">{{ object.created_at|time_since }}</time>
+            </div>
+        </div>
+        <div class="body topic-text">
+            {% if full != true %}
+                <div class="body-inner">{{ object.description }}</div>
+            {% else %}
+                <div class="body-inner">{{ object.description|truncatechars:200 }}</div>
+                {% if object.description|length > 200 %}
+                    <div class="read_more-link">
+                        <a href="{% url 'topics:detail' pk=object.interest.pk slug=object.slug %}" class="link">Читать
+                            дальше →</a>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</article>

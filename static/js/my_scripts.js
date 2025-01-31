@@ -42,7 +42,7 @@ $(document).ready(function () {
 
         let $this = $(this);
         let url = $this.data('url');
-        let userId = $this.data('user-id')
+        let userId = $this.data('user-id');
 
         $.ajax({
             type: 'POST',
@@ -71,8 +71,8 @@ $(document).ready(function () {
     function updateUserDetail(newObjectHtml, objectId) {
         $('#user-detail').html(newObjectHtml);
         area.each(function (_, el) {
-            $(el).data('user-id', objectId)
-            $(el).attr('data-user-id', objectId)
+            $(el).data('user-id', objectId);
+            $(el).attr('data-user-id', objectId);
         });
     }
 
@@ -85,17 +85,70 @@ $(document).ready(function () {
             data: {
                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.success) {
                     $this.addClass('off');
                 } else {
                     alert('Произошла ошибка при отметке уведомления как прочитанного.');
                 }
             },
-            error: function(xhr, textStatus, errorThrown) {
+            error: function (xhr, textStatus, errorThrown) {
                 console.error(textStatus + ': ' + errorThrown);
             }
         });
     });
+
+    $('#comment_form').on('submit', function (event) {
+        event.preventDefault();
+
+        let $this = $(this);
+        let formData = new FormData(this);
+        let comType = $this.data('type');
+        let interestId = null;
+        let topicId = null;
+        let text = formData.get('comment')
+
+        if (comType === 'interest') {
+            interestId = $this.data('id');
+        } else if (comType === 'topic') {
+            topicId = $this.data('id');
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: "/interests/topics/new_comment/",
+            data: {
+                text: text,
+                interest: interestId,
+                topic: topicId,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function (response) {
+                if (response.success) {
+                    location.reload()
+                    console.log("Комментарий отправлен")
+                } else {
+                    alert("Произошла ошибка при отправке")
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Ошибка:', xhr.statusText);
+            }
+        });
+    });
+
+    $('#id_comment').on('keydown', function (event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            $('#comment_form').submit();
+        }
+    });
+
+    let currentUrl = window.location.pathname;
+    let parts = currentUrl.split("/");
+    parts.pop();
+    parts.pop();
+    let newUrl = parts.join("/") + "/";
+    $('#back').attr('href', newUrl);
 });
 

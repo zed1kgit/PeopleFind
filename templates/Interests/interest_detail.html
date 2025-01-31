@@ -1,49 +1,29 @@
-{% extends 'base.html' %}
+{% extends 'interests/interest_base.html' %}
 {% load my_tags %}
-{% block content %}
-    <div>
-        <header class="head">
-            <h1>{{ object.name }}</h1>
-            <a href="{% url 'interests:list' %}">Все интересы</a>
-        </header>
-        <div class="int-menu">
-            <div class="content">
-                <div class="block">
-                    {{ object.description|default:"Нет описания" }}
-                </div>
+{% block int_content %}
+    <div class="block">
+        {{ object.description|default:"Нет описания" }}
+    </div>
+    {% if object.topics.count != 0 %}
+        <div class="headline"><a href="{% url 'topics:list' object.pk %}">топики <div class="count">{{ object.topics.count }}</div></a></div>
+        <div class="block">
+            <div class="topics">
+                {% for topic in topics %}
+                {% include 'includes/topic_inc.html' with object=topic %}
+            {% endfor %}
             </div>
-            <aside class="menu">
-                <div>
-                    <div class="int-logo">
-                        <img src="{{ object.logo|interest_media }}">
-                    </div>
-                    <div class="block">
-                    {% if user.is_authenticated %}
-                        <button class="subscribe btn {% if user in object.members.all %}btn-danger{% else %}btn-success{% endif %}"
-                           data-url="{% url 'interests:toggle-interest' object.id %}"
-                           data-interest-id="{{ object.id }}"
-                           data-is-subscribed="{% if user in object.members.all %}true{% else %}false{% endif %}">
-                            {% if user in object.members.all %}
-                                Отписаться
-                            {% else %}
-                                Подписаться
-                            {% endif %} </button>
-                    {% else %}
-                        <a class="btn btn-primary" href="{% url 'users:login' %}?next={{ request.path }}">Вход для подписки</a>
-                    {% endif %}
-                    </div>
-                </div>
-                <div class="block">
-                    <div class="headline">участники
-                        <div class="count">{{ object.members.count }}</div>
-                    </div>
-                    <div class="members">
-                        {% for member in object.members.all %}
-                            {% include 'includes/user_avatar.html' with object=member %}
-                        {% endfor %}
-                    </div>
-                </div>
-            </aside>
         </div>
+    {% endif %}
+    <div class="headline"><a href="{% url 'interests:comments' object.pk %}">комментарии <div class="count">{% if object.comments.count != 0 %}{{ object.comments.count }}{% endif %} </div></a></div>
+    <div class="block">
+        <div class="comments">
+            {% if object.comments.count == 0 %}
+                <p class="nothing-here">Нет комментариев</p>
+            {% endif %}
+            {% for comment in comments reversed %}
+        	{% include 'includes/comment_inc.html' with object=comment %}
+        {% endfor %}
+        </div>
+        {% include 'includes/write_comment_inc.html' with type='interest' id=object.pk %}
     </div>
 {% endblock %}

@@ -1,0 +1,11 @@
+{% if user.is_authenticated %}
+    <form method="POST" accept-charset="UTF-8" id="comment_form" class="new-comment"
+          data-type="{{ type }}" data-id="{{ id }}">
+        <p>
+            <label for="id_comment" class="headline">Твой комментарий</label>
+            <textarea name="comment" id="id_comment" cols="30" rows="3" placeholder="Ваш комментарий..."
+                      required class="form-control"></textarea>
+        </p>
+        <button class="btn btn-success" type="submit">Отправить</button>
+    </form>
+{% endif %} 

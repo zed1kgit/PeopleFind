@@ -1,0 +1,20 @@
+{% extends 'interests/interest_base.html' %}
+{% load my_tags %}
+{% block int_content %}
+    {% include 'includes/topic_inc.html' with object=object full='true' %}
+    <div class="headline">комментарии
+        <div class="count">{% if object.comments.count != 0 %}{{ object.comments.count }}{% endif %} </div>
+    </div>
+    <div class="block">
+        <div class="comments">
+            {% if object_list.count == 0 %}
+                <p class="nothing-here">Нет комментариев</p>
+            {% endif %}
+            {% for comment in object_list.all %}
+                {% include 'includes/comment_inc.html' with object=comment %}
+            {% endfor %}
+            {% include 'includes/pagination_inc.html' %}
+        </div>
+        {% include 'includes/write_comment_inc.html' with type='topic' id=object.pk %}
+    </div>
+{% endblock %}

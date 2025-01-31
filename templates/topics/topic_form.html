@@ -1,0 +1,13 @@
+{% extends 'interests/interest_base.html' %}
+{% load my_tags %}
+{% block int_content %}
+    <div class="headline">новый топик</div>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="buttons">
+            <a href="{% url 'interests:list' %}" class="btn btn-danger">Отмена</a>
+            <button type="submit" class="btn btn-success">Создать</button>
+        </div>
+    </form>
+{% endblock %}

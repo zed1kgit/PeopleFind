@@ -2,7 +2,7 @@ from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
-from django.views.generic import CreateView, UpdateView, ListView, DetailView, RedirectView
+from django.views.generic import CreateView, UpdateView, ListView, DetailView, RedirectView, View
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -91,7 +91,7 @@ class NotificationsListView(LoginRequiredMixin, ListView):
         return self.request.user.notifications.all().order_by('-date_created')
 
 
-class NotificationReadView(LoginRequiredMixin, RedirectView):
+class NotificationReadView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         notification = Notification.objects.get(id=kwargs.get('pk'), user=self.request.user)
         notification.viewed = True

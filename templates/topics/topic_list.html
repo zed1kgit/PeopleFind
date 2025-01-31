@@ -1,0 +1,18 @@
+{% extends 'interests/interest_base.html' %}
+{% load my_tags %}
+{% block int_content %}
+    <div class="headline">топики
+        <div class="count">{% if object_list.count != 0 %}{{ object_list.count }}{% endif %} </div>
+    </div>
+    <div class="block">
+        <div class="comments">
+            {% if object_list.count == 0 %}
+                <p class="nothing-here">Нет комментариев</p>
+            {% endif %}
+            {% for topic in object_list.all %}
+                {% include 'includes/topic_inc.html' with object=topic %}
+            {% endfor %}
+            {% include 'includes/pagination_inc.html' %}
+        </div>
+    </div>
+{% endblock %}

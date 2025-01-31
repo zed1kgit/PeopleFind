@@ -3,7 +3,7 @@
     <div class="inner">
         <aside class="markers"><div class="new-marker{% if object.viewed %} off{% endif %}" data-id="{{ object.pk }}"></div></aside>
         <header>
-            <span class="notif-name">{{ object.title }}</span>
+            <span class="name">{{ object.title }}</span>
             <span class="time"><time datetime="{{ object.date_created }}" title="{{ object.date_created }}">{{ object.date_created|time_since }}</time></span>
         </header>
         <div class="body">{{ object.message|safe }}</div>

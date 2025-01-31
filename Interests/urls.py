@@ -3,7 +3,8 @@ from django.views.decorators.cache import never_cache
 
 from Interests.apps import InterestsConfig
 from Interests.views import InterestCreate, InterestUpdate, InterestDelete, InterestDetailView, InterestListView, \
-    FoundSimilarUserView, DenySimilarUserView, FindSimilarUser, ApproveSimilarUserView, ToggleInterestView
+    FoundSimilarUserView, DenySimilarUserView, FindSimilarUser, ApproveSimilarUserView, ToggleInterestView, \
+    InterestCommentsListView
 
 app_name = InterestsConfig.name
 
@@ -18,4 +19,5 @@ urlpatterns = [
     path('deny-user/', never_cache(DenySimilarUserView.as_view()), name='deny-user'),
     path('approve-user/', never_cache(ApproveSimilarUserView.as_view()), name='approve-user'),
     path('toggle-interest/<int:pk>/', ToggleInterestView.as_view(), name='toggle-interest'),
+    path('<int:pk>/comments/', InterestCommentsListView.as_view(), name='comments'),
 ]

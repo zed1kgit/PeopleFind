@@ -39,6 +39,9 @@
             {% if user.is_authenticated %}
                 <li><a class="dropdown-item" href="{% url 'users:profile-redirect' %}">Профиль</a></li>
                 <li><a class="dropdown-item" href="{% url 'users:mutual-list' %}">Взаимные пользователи</a></li>
+                {% if user.role == 'moderator' or user.role == 'admin'  %}
+                    <li><a class="dropdown-item" href="{% url 'interests:create' %}">Создать интерес</a></li>
+                {% endif %} 
                 <li>
                     <form method="post" action="{% url 'users:logout' %}">
                         {% csrf_token %}

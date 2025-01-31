@@ -1,26 +1,28 @@
+from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, RedirectView, TemplateView
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, RedirectView, TemplateView, View
 from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Count
 
 from Interests.forms import InterestForm
 from Interests.models import Interest
 from Interests.utils import find_people
-from users.models import User
+from topics.models import Comment
+from users.models import User, UserRoles
 
 
 class InterestCreate(CreateView):
     model = Interest
     form_class = InterestForm
-    success_url = reverse_lazy('interests:detail')
 
-    def form_valid(self, form):
-        interest = form.save()
-        interest.created_by = self.request.user
-        interest.save()
-        return super().form_valid(form)
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            if request.user.role in (UserRoles.MODERATOR, UserRoles.ADMIN,):
+                return super().dispatch(request, *args, **kwargs)
+        raise PermissionDenied()
+
 
 
 class InterestUpdate(UpdateView):
@@ -43,6 +45,12 @@ class InterestListView(ListView):
 
 class InterestDetailView(DetailView):
     model = Interest
+
+    def get_context_data(self, **kwargs):
+        contex = super().get_context_data(**kwargs)
+        contex['comments'] = get_object_or_404(Interest, pk=self.kwargs['pk']).comments.order_by('-created_at')[:3]
+        contex['topics'] = get_object_or_404(Interest, pk=self.kwargs['pk']).topics.annotate(num_comments=Count('comments')).order_by('-num_comments')[:3]
+        return contex
 
 
 class FindSimilarUser(LoginRequiredMixin, RedirectView):
@@ -71,7 +79,7 @@ class FoundSimilarUserView(LoginRequiredMixin, TemplateView):
             return 'Interests/not_found.html'
 
 
-class DenySimilarUserView(LoginRequiredMixin, RedirectView):
+class DenySimilarUserView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         current_user = self.request.user
         added_user = get_object_or_404(User, pk=request.POST.get('user-id'))
@@ -85,7 +93,7 @@ class DenySimilarUserView(LoginRequiredMixin, RedirectView):
             return JsonResponse({'success': True, 'new_object_id': 'none'})
 
 
-class ApproveSimilarUserView(LoginRequiredMixin, RedirectView):
+class ApproveSimilarUserView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         current_user = self.request.user
         added_user = get_object_or_404(User, pk=request.POST.get('user-id'))
@@ -99,7 +107,7 @@ class ApproveSimilarUserView(LoginRequiredMixin, RedirectView):
             return JsonResponse({'success': True, 'new_object_id': 'none'})
 
 
-class ToggleInterestView(LoginRequiredMixin, RedirectView):
+class ToggleInterestView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         interest_id = kwargs.get('pk')
         interest = Interest.objects.get(id=interest_id)
@@ -109,3 +117,20 @@ class ToggleInterestView(LoginRequiredMixin, RedirectView):
         else:
             interest.members.add(user)
         return JsonResponse({'success': True})
+
+
+class InterestCommentsListView(ListView):
+    model = Comment
+    template_name = 'Interests/comment_list.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(interest_id=self.kwargs['pk'])
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['object'] = get_object_or_404(Interest, pk=self.kwargs['pk'])
+        return context
+

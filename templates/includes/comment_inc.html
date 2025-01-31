@@ -1,0 +1,16 @@
+{% load my_tags %}
+<div class="comment">
+    <div class="inner">
+        <header>
+            <a href="{% url 'users:profile' object.user.slug %}">
+                <img alt="{{ object.user.name }}" src="{{ object.user.avatar|user_media }}">
+            </a>
+            <div class="name-date">
+                <a class="name" href="{% url 'users:profile' object.user.slug %}">{{ object.user.name }}</a>
+                <span class="time"><time datetime="{{ object.created_at }}"
+                                         title="{{ object.created_at }}">{{ object.created_at|time_since }}</time></span>
+            </div>
+        </header>
+        <div class="body">{{ object.text }}</div>
+    </div>
+</div>
