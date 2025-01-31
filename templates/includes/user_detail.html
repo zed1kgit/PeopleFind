@@ -5,6 +5,11 @@
              src="{{ object.avatar|user_media }}" width="200" height="200"
              alt="{{ object.name }}"
              title="{{ object.name }}">
+        <div class="profile-actions">
+            {% if user.role == 'moderator' or user.role == 'admin' or user.pk == object.pk %}
+            	<a class="btn btn-success" href="{% url 'users:update' object.slug %}">Изменить профиль</a>
+            {% endif %}
+        </div>
     </div>
     <h1 class="user-name">{{ object.name }}</h1>
     <div class="card-body">

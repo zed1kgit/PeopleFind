@@ -1016,3 +1016,8 @@ div.body {
 footer {
     margin-top: 10px;
 }
+
+.profile-actions .btn {
+    margin-top: 5px;
+    width: 100%;
+}

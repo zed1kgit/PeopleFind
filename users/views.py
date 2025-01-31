@@ -1,6 +1,7 @@
+from django.core.exceptions import PermissionDenied
 from django.db.models import Count
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.views.generic import CreateView, UpdateView, ListView, DetailView, RedirectView, View
 from django.urls import reverse_lazy
@@ -8,7 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from Interests.models import Interest
 from users.forms import UserRegisterForm, UserLoginForm, UserUpdateForm, UserForm
-from users.models import User, Notification
+from users.models import User, Notification, UserRoles
 
 
 def index(request):
@@ -54,6 +55,25 @@ class UserLogoutView(LogoutView):
 
 class UserProfileView(DetailView):
     model = User
+    context_object_name = 'object'
+
+
+class UserUpdateView(UpdateView):
+    model = User
+    form_class = UserUpdateForm
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(User, slug=self.kwargs['slug'])
+
+    def get_success_url(self):
+        return reverse_lazy('users:profile', kwargs={'slug': self.kwargs['slug']})
+
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if request.user.is_authenticated:
+            if request.user == obj or request.user.role in (UserRoles.MODERATOR, UserRoles.ADMIN,):
+                return super().dispatch(request, *args, **kwargs)
+        raise PermissionDenied()
 
 
 class SelfProfileView(LoginRequiredMixin, RedirectView):
