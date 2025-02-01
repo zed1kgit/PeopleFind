@@ -1,12 +1,20 @@
 {% extends 'base.html' %}
 
 {% block content %}
-            <div class="card-header">Регистрация</div>
-            <div class="card-body">
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <button type="submit" class="btn btn-success">Регистрация</button>
-                </form>
-            </div>
+    {% if object %}
+    	<div class="card-header">{{ object.name }}</div>
+    {% else %} 
+        <div class="card-header">Регистрация</div>
+    {% endif %}
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {% if object %}
+                <button type="submit" class="btn btn-success">Изменить</button>
+            {% else %}
+                <button type="submit" class="btn btn-success">Регистрация</button>
+            {% endif %}
+        </form>
+    </div>
 {% endblock %}

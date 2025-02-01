@@ -137,6 +137,48 @@ $(document).ready(function () {
         });
     });
 
+    $('.item-delete').on('click', function (event) {
+        event.preventDefault();
+        if (confirm('Вы уверены, что хотите это удалить?')) {
+            let $this = $(this);
+            let type = $this.data('type');
+            let commentId = null;
+            let topicId = null;
+
+            if (type === 'comment') {
+                commentId = $this.data('id');
+            } else if (type === 'topic') {
+                topicId = $this.data('id');
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "/interests/delete/",
+                data: {
+                    comment: commentId,
+                    topic: topicId,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                },
+                success: function (response) {
+                    if (response.success) {
+                        if (type === 'comment') {
+                            let element = $('.comment#0'.replace('0', commentId));
+                            element.remove()
+                        } else if (type === 'topic') {
+                            let element = $('.topic#0'.replace('0', topicId));
+                            element.remove()
+                        }
+                    } else {
+                        alert("Произошла ошибка")
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Ошибка:', xhr.statusText);
+                }
+            });
+        }
+    });
+
     $('#id_comment').on('keydown', function (event) {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();

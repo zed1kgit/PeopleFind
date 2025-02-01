@@ -8,7 +8,8 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from Interests.models import Interest
-from users.forms import UserRegisterForm, UserLoginForm, UserUpdateForm, UserForm
+from topics.models import Topic
+from users.forms import UserRegisterForm, UserLoginForm, UserUpdateForm, UserForm, UserAdminForm
 from users.models import User, Notification, UserRoles
 
 
@@ -16,9 +17,12 @@ def index(request):
     context = {
         "title": "PeopleFind",
         "nav_title": "Главная",
-        "interests_objects_list": Interest.objects.annotate(
+        "interest_objects_list": Interest.objects.annotate(
             related_count=Count('members')
         ).order_by('-related_count')[:4],
+        "topic_objects_list": Topic.objects.annotate(
+            related_count=Count('comments'),
+        ).order_by('-related_count')[:3],
     }
     return render(request, 'index.html', context)
 
@@ -31,6 +35,7 @@ class UserRegisterView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Регистрация'
+        context['nav_title'] = 'Регистрация'
         return context
 
 
@@ -40,6 +45,7 @@ class UserLoginView(LoginView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Авторизация'
+        context['nav_title'] = 'Авторизация'
         return context
 
     def get_default_redirect_url(self):
@@ -57,23 +63,38 @@ class UserProfileView(DetailView):
     model = User
     context_object_name = 'object'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = self.get_object().name
+        context['nav_title'] = 'Профиль'
+        return context
 
-class UserUpdateView(UpdateView):
+
+class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
-    form_class = UserUpdateForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = self.get_object().name
+        context['nav_title'] = 'Профиль'
+        return context
 
     def get_object(self, queryset=None):
-        return get_object_or_404(User, slug=self.kwargs['slug'])
+        self.object = super().get_object(queryset=queryset)
+        if self.request.user.is_authenticated:
+            if self.request.user == self.object or self.request.user.role in (UserRoles.MODERATOR, UserRoles.ADMIN,):
+                self.object = self.object
+                return self.object
+        raise PermissionDenied()
 
     def get_success_url(self):
         return reverse_lazy('users:profile', kwargs={'slug': self.kwargs['slug']})
 
-    def dispatch(self, request, *args, **kwargs):
-        obj = self.get_object()
-        if request.user.is_authenticated:
-            if request.user == obj or request.user.role in (UserRoles.MODERATOR, UserRoles.ADMIN,):
-                return super().dispatch(request, *args, **kwargs)
-        raise PermissionDenied()
+    def get_form(self, form_class=None):
+        if self.request.user.role == UserRoles.ADMIN:
+            return UserAdminForm(instance=self.object)
+        else:
+            return UserUpdateForm(instance=self.object)
 
 
 class SelfProfileView(LoginRequiredMixin, RedirectView):
@@ -83,8 +104,6 @@ class SelfProfileView(LoginRequiredMixin, RedirectView):
 
 
 class UserIdRedirectView(RedirectView):
-    model = User
-
     def get_redirect_url(self, *args, **kwargs):
         user_slug = User.objects.get(pk=self.kwargs['pk']).slug
         return reverse_lazy('users:profile', kwargs={'slug': user_slug})
@@ -93,6 +112,12 @@ class UserIdRedirectView(RedirectView):
 class MutualUsersListView(LoginRequiredMixin, ListView):
     model = User
     template_name = 'users/mutual_users_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Похожие пользователи'
+        context['nav_title'] = 'Пользователи'
+        return context
 
     def get_queryset(self):
         user = self.request.user
@@ -106,6 +131,12 @@ class MutualUsersListView(LoginRequiredMixin, ListView):
 
 class NotificationsListView(LoginRequiredMixin, ListView):
     model = Notification
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Уведомления'
+        context['nav_title'] = 'Уведомления'
+        return context
 
     def get_queryset(self):
         return self.request.user.notifications.all().order_by('-date_created')

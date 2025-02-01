@@ -7,6 +7,7 @@ from django.views.generic import CreateView, View, ListView
 from Interests.models import Interest
 from topics.forms import TopicForm
 from topics.models import Topic, Comment
+from users.models import UserRoles
 
 
 class TopicCreateView(LoginRequiredMixin, CreateView):
@@ -16,6 +17,8 @@ class TopicCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['object'] = get_object_or_404(Interest, pk=self.kwargs['pk'])
+        context['title'] = context['object'].name
+        context['nav_title'] = 'Создание'
         return context
 
     def get_success_url(self):
@@ -31,7 +34,7 @@ class TopicCreateView(LoginRequiredMixin, CreateView):
 
 class CommentCreateView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
-        user = self.request.user
+        user = request.user
         text = request.POST['text']
         interest = None
         topic = None
@@ -41,6 +44,24 @@ class CommentCreateView(LoginRequiredMixin, View):
             topic = get_object_or_404(Topic, pk=request.POST['topic'])
         comment = Comment.objects.create(user=user, text=text, interest=interest, topic=topic)
         user.comments.add(comment)
+        return JsonResponse({'success': True})
+
+
+class DeleteView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        if request.POST['comment']:
+            comment = get_object_or_404(Comment, pk=request.POST['comment'])
+            if user is comment.user or user.role in (UserRoles.MODERATOR, UserRoles.ADMIN,):
+                comment.delete()
+            else:
+                return JsonResponse({'success': False})
+        if request.POST['topic']:
+            topic = get_object_or_404(Topic, pk=request.POST['topic'])
+            if user is topic.author or user.role in (UserRoles.MODERATOR, UserRoles.ADMIN,):
+                topic.delete()
+            else:
+                return JsonResponse({'success': False})
         return JsonResponse({'success': True})
 
 
@@ -58,6 +79,8 @@ class TopicDetailView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['object'] = get_object_or_404(Topic, slug=self.kwargs['slug'])
+        context['title'] = 'Топик'
+        context['nav_title'] = 'Топик'
         return context
 
 
@@ -78,4 +101,6 @@ class TopicListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['object'] = get_object_or_404(Interest, pk=self.kwargs['pk'])
+        context['title'] = f'Топики: {context['object'].name}'
+        context['nav_title'] = 'Топики'
         return context

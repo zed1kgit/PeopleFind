@@ -1,4 +1,5 @@
 {% load static %}
+{% load my_tags %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -11,6 +12,8 @@
 
     <link href="{% static 'css/my_stylesheet.css' %}" rel="stylesheet">
 
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="{% static 'js/my_scripts.js' %}"></script>
 
@@ -20,39 +23,44 @@
 <header class="top_menu">
     <div class="menu_logo">
         <a class="logo-container" href="{% url "users:index" %}" title="PeopleFind">
-            <div class="logo"></div>
+            <div class="logo"><img src="/static/logo.png" alt="PeopleFind" title="PeopleFind"></div>
             <div class="logo-text">PeopleFind</div>
         </a>
     </div>
-    
-    <div class="right">
-    {% if user.is_authenticated %}
-    	<a class="menu-icon notifications" data-count="{{ user.get_unread_notifications_count }}" href="{% url 'users:notifications' %}" title="Уведомления"></a>
-    {% endif %}
-    <div class="dropdown">
-        <a class="user-dropdown btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-           data-bs-toggle="dropdown" aria-expanded="false">
-            {{ nav_title|default:'Меню' }}
-        </a>
 
-        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            {% if user.is_authenticated %}
-                <li><a class="dropdown-item" href="{% url 'users:profile-redirect' %}">Профиль</a></li>
-                <li><a class="dropdown-item" href="{% url 'users:mutual-list' %}">Взаимные пользователи</a></li>
-                {% if user.role == 'moderator' or user.role == 'admin'  %}
-                    <li><a class="dropdown-item" href="{% url 'interests:create' %}">Создать интерес</a></li>
-                {% endif %} 
-                <li>
-                    <form method="post" action="{% url 'users:logout' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="dropdown-item">Выход</button>
-                    </form>
-                </li>
-            {% else %}
-                <li><a class="dropdown-item" href="{% url 'users:login' %}">Войти</a></li>
-            {% endif %}
-        </ul>
+    <div class="menu_logo">
+        <a class="text" href="{% url "users:index" %}" title="{{ nav_title }}">{{ nav_title }}</a>
     </div>
+
+    <div class="right">
+        {% if user.is_authenticated %}
+            <a class="menu-icon notifications" data-count="{{ user.get_unread_notifications_count }}"
+               href="{% url 'users:notifications' %}" title="Уведомления"></a>
+
+            <div class="dropdown">
+                <a class="user-dropdown btn dropdown-toggle" href="{% url 'users:profile-redirect' %}" role="button"
+                   id="dropdownMenuLink"
+                   data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="{{ user.avatar|user_media }}" alt="{{ user.name }}" title="{{ user.name }}">
+                    <span class="nickname">{{ user.name }}</span>
+                </a>
+
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    <li><a class="dropdown-item" href="{% url 'users:mutual-list' %}">Взаимные пользователи</a></li>
+                    {% if user.role == 'moderator' or user.role == 'admin' %}
+                        <li><a class="dropdown-item" href="{% url 'interests:create' %}">Создать интерес</a></li>
+                    {% endif %}
+                    <li>
+                        <form method="post" action="{% url 'users:logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item">Выход</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        {% else %}
+            <a href="{% url 'users:login' %}" class="btn my-btn">Войти</a>
+        {% endif %}
     </div>
 
 </header>

@@ -1,6 +1,13 @@
 {% load my_tags %}
-<div class="comment">
+<div class="comment" id="{{ object.pk }}">
     <div class="inner">
+        <aside class="buttons">
+            {% if user == object.user or user.role == 'moderator' or user.role == 'admin' %}
+                <div class="main-controls">
+                    <span class="item-delete" title="Удалить" data-type="comment" data-id="{{ object.pk }}"></span>
+                </div>
+            {% endif %}
+        </aside>
         <header>
             <a href="{% url 'users:profile' object.user.slug %}">
                 <img alt="{{ object.user.name }}" src="{{ object.user.avatar|user_media }}">

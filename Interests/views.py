@@ -1,7 +1,8 @@
 from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, RedirectView, TemplateView, View
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, RedirectView, TemplateView, \
+    View
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Count
@@ -17,12 +18,17 @@ class InterestCreate(CreateView):
     model = Interest
     form_class = InterestForm
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = 'Создание интереса'
+        context['nav_title'] = 'Создание'
+        return context
+
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             if request.user.role in (UserRoles.MODERATOR, UserRoles.ADMIN,):
                 return super().dispatch(request, *args, **kwargs)
         raise PermissionDenied()
-
 
 
 class InterestUpdate(UpdateView):
@@ -37,6 +43,12 @@ class InterestDelete(DeleteView):
 class InterestListView(ListView):
     model = Interest
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = 'Интересы'
+        context['nav_title'] = 'Интересы'
+        return context
+
     def get_queryset(self):
         return super().get_queryset().annotate(
             related_count=Count('members')
@@ -47,10 +59,13 @@ class InterestDetailView(DetailView):
     model = Interest
 
     def get_context_data(self, **kwargs):
-        contex = super().get_context_data(**kwargs)
-        contex['comments'] = get_object_or_404(Interest, pk=self.kwargs['pk']).comments.order_by('-created_at')[:3]
-        contex['topics'] = get_object_or_404(Interest, pk=self.kwargs['pk']).topics.annotate(num_comments=Count('comments')).order_by('-num_comments')[:3]
-        return contex
+        context = super().get_context_data(**kwargs)
+        context["title"] = self.get_object().name
+        context['nav_title'] = 'Интерес'
+        context['comments'] = get_object_or_404(Interest, pk=self.kwargs['pk']).comments.order_by('-created_at')[:10]
+        context['topics'] = get_object_or_404(Interest, pk=self.kwargs['pk']).topics.annotate(
+            num_comments=Count('comments')).order_by('-num_comments')[:10]
+        return context
 
 
 class FindSimilarUser(LoginRequiredMixin, RedirectView):
@@ -66,6 +81,8 @@ class FoundSimilarUserView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["title"] = 'Поиск пользователя'
+        context['nav_title'] = 'Поиск'
         found_user = self.request.session.get('found-user', {})
         context['found_user'] = found_user
         return context
@@ -132,5 +149,6 @@ class InterestCommentsListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['object'] = get_object_or_404(Interest, pk=self.kwargs['pk'])
+        context['title'] = f'Комментарии: {context['object'].name}'
+        context['nav_title'] = 'Комментарии'
         return context
-

@@ -7,7 +7,7 @@
     {% if object.topics.count != 0 %}
         <div class="headline"><a href="{% url 'topics:list' object.pk %}">топики <div class="count">{{ object.topics.count }}</div></a></div>
         <div class="block">
-            <div class="topics">
+            <div class="topics short">
                 {% for topic in topics %}
                 {% include 'includes/topic_inc.html' with object=topic %}
             {% endfor %}
@@ -16,7 +16,7 @@
     {% endif %}
     <div class="headline"><a href="{% url 'interests:comments' object.pk %}">комментарии <div class="count">{% if object.comments.count != 0 %}{{ object.comments.count }}{% endif %} </div></a></div>
     <div class="block">
-        <div class="comments">
+        <div class="comments short">
             {% if object.comments.count == 0 %}
                 <p class="nothing-here">Нет комментариев</p>
             {% endif %}

@@ -1,13 +1,30 @@
 {% load my_tags %}
-<article class="topic">
+<article class="topic" id="{{ object.pk }}">
     <div class="inner">
-        <header>
-            <a href="{% url 'topics:detail' pk=object.interest.pk slug=object.slug %}" class="poster"><img
-                    src="{{ object.author.avatar|user_media }}" alt="{{ object.title }}"></a>
-            <div class="name-date"><a class="name"
-                                      href='{% url 'topics:detail' pk=object.interest.pk slug=object.slug %}'
-                                      title="{{ object.title }}">{{ object.title }}</a></div>
-        </header>
+        {% if full %}
+            <header>
+                <a href="{% url 'users:profile' object.author.slug %}" class="poster"><img
+                        src="{{ object.author.avatar|user_media }}" alt="{{ object.author.name }}"></a>
+                <div class="name-date"><a class="name"
+                                          href='{% url 'users:profile' object.author.slug %}'
+                                          title="{{ object.author.name }}">{{ object.author.name }}</a></div>
+            </header>
+        {% else %}
+            <aside class="buttons">
+            {% if user == object.author or user.role == 'moderator' or user.role == 'admin' %}
+                <div class="main-controls">
+                    <span class="item-delete" title="Удалить" data-type="topic" data-id="{{ object.pk }}"></span>
+                </div>
+            {% endif %}
+            </aside>
+            <header>
+                <a href="{% url 'topics:detail' pk=object.interest.pk slug=object.slug %}" class="poster"><img
+                        src="{{ object.author.avatar|user_media }}" alt="{{ object.title }}"></a>
+                <div class="name-date"><a class="name"
+                                          href='{% url 'topics:detail' pk=object.interest.pk slug=object.slug %}'
+                                          title="{{ object.title }}">{{ object.title }}</a></div>
+            </header>
+        {% endif %}
         <div class="status-line">
             <div class="section main"><span class="comments-count">{{ object.comments.count }}</span></div>
             <div class="section created_at">
