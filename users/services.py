@@ -11,14 +11,14 @@ from users.models import User, Notification
 def send_approval_notification(user1, user2):
     notification1 = Notification.objects.create(
         title=f"Взаимное одобрение",
-        message=f"Пользователь <a href='{reverse_lazy("users:profile", kwargs={'slug': user2.slug})}' title='{user2.name}'>{user2.name}</a> также одобрил вас!",
+        message=f"Пользователь <a href='{reverse_lazy("users:profile", kwargs={'slug': user2.slug})}' title='{user2.name}'>{user2.name}</a> также одобрил вас!<br>Его контакты для связи: {user2.contacts}",
         user=user1
     )
     user1.notifications.add(notification1)
 
     notification2 = Notification.objects.create(
         title=f"Взаимное одобрение",
-        message=f"Пользователь <a href='{reverse_lazy("users:profile", kwargs={'slug': user1.slug})}' title='{user1.name}'>{user1.name}</a> также одобрил вас!",
+        message=f"Пользователь <a href='{reverse_lazy("users:profile", kwargs={'slug': user1.slug})}' title='{user1.name}'>{user1.name}</a> также одобрил вас!<br>Его контакты для связи: {user1.contacts}",
         user=user2
     )
     user2.notifications.add(notification2)

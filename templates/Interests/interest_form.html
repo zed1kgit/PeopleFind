@@ -1,10 +1,18 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="card-header">Создание новой группы</div>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button class="btn btn-success" type="submit">Создать</button>
-</form>
+    {% if object %}
+        <div class="card-header">{{ object.name }}</div>
+    {% else %}
+        <div class="card-header">Создание нового интереса</div>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {% if object %}
+            <button class="btn btn-success" type="submit">Изменить</button>
+        {% else %}
+            <button class="btn btn-success" type="submit">Создать</button>
+        {% endif %}
+    </form>
 {% endblock %}

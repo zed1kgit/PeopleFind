@@ -1,3 +1,5 @@
+import random
+
 from django.db.models import Count
 
 from users.models import User

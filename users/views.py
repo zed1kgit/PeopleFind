@@ -3,7 +3,7 @@ from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
-from django.views.generic import CreateView, UpdateView, ListView, DetailView, RedirectView, View
+from django.views.generic import CreateView, UpdateView, ListView, DetailView, RedirectView, View, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -83,7 +83,6 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
         self.object = super().get_object(queryset=queryset)
         if self.request.user.is_authenticated:
             if self.request.user == self.object or self.request.user.role in (UserRoles.MODERATOR, UserRoles.ADMIN,):
-                self.object = self.object
                 return self.object
         raise PermissionDenied()
 

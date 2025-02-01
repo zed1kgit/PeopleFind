@@ -14,7 +14,7 @@ from topics.models import Comment
 from users.models import User, UserRoles
 
 
-class InterestCreate(CreateView):
+class InterestCreateView(CreateView):
     model = Interest
     form_class = InterestForm
 
@@ -24,6 +24,9 @@ class InterestCreate(CreateView):
         context['nav_title'] = 'Создание'
         return context
 
+    def get_success_url(self):
+        return reverse_lazy('interests:detail', kwargs={'pk': self.object.pk})
+
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             if request.user.role in (UserRoles.MODERATOR, UserRoles.ADMIN,):
@@ -31,13 +34,38 @@ class InterestCreate(CreateView):
         raise PermissionDenied()
 
 
-class InterestUpdate(UpdateView):
+class InterestUpdateView(UpdateView):
     model = Interest
-    fields = ['name', 'description']
+    form_class = InterestForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = self.get_object().name
+        context['nav_title'] = 'Интерес'
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('interests:detail', kwargs={'pk': self.object.pk})
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset=queryset)
+        if self.request.user.is_authenticated:
+            if self.request.user.role in (UserRoles.MODERATOR, UserRoles.ADMIN,):
+                return self.object
+        raise PermissionDenied()
 
 
-class InterestDelete(DeleteView):
+class InterestDeleteView(DeleteView):
     model = Interest
+    template_name = 'Interests/delete.html'
+    success_url = reverse_lazy('users:index')
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset=queryset)
+        if self.request.user.is_authenticated:
+            if self.request.user.role in (UserRoles.ADMIN,):
+                return self.object
+        raise PermissionDenied()
 
 
 class InterestListView(ListView):

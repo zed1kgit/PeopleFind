@@ -8,7 +8,7 @@ from Interests.forms import StyleFormMixin
 class UserForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = User
-        fields = ('email', 'name', 'slug', 'avatar', 'description',)
+        fields = ('email', 'name', 'slug', 'avatar', 'contacts', 'description',)
 
 
 class UserAdminForm(StyleFormMixin, forms.ModelForm):
@@ -30,4 +30,4 @@ class UserLoginForm(StyleFormMixin, AuthenticationForm):
 class UserUpdateForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = User
-        fields = ('email', 'name', 'slug', 'avatar', 'description',)
+        fields = ('avatar', 'email', 'name', 'slug', 'contacts', 'description',)

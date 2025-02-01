@@ -1028,6 +1028,16 @@ div.body {
     color: rgba(172, 162, 193, 1)
 }
 
+.confirm {
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.confirm .btn {
+    width: 30%;
+}
+
 .status-line {
     line-height: 23px;
 }

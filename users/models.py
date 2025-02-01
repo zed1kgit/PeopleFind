@@ -1,3 +1,4 @@
+from celery.worker.strategy import default
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.urls import reverse_lazy
@@ -20,6 +21,7 @@ class User(AbstractUser):
     name = models.CharField(blank=False, max_length=16, verbose_name='Отображаемое имя')
     slug = models.SlugField(unique=True, blank=False, db_index=True, max_length=12, verbose_name='Имя пользователя')
     description = models.TextField(max_length=350, verbose_name='Описание', **NULLABLE)
+    contacts = models.CharField(max_length=255, verbose_name='Контакты для связи', default='Отсутствуют', **NULLABLE)
     avatar = models.ImageField(upload_to='users/', verbose_name='Аватар', **NULLABLE)
     is_active = models.BooleanField(default=True, verbose_name='Active')
     approved_users = models.ManyToManyField('self', symmetrical=False, related_name="approved", blank=True)

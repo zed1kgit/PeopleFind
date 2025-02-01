@@ -26,9 +26,20 @@
                                     Отписаться
                                 {% else %}
                                     Подписаться
-                                {% endif %} </button>
+                                {% endif %}
+                            </button>
                             <footer></footer>
                             <a href="{% url 'topics:create' object.pk %}" class="btn btn-primary">Новый топик</a>
+                            {% if user.role == 'moderator' or user.role == 'admin' %}
+                                <footer></footer>
+                                <a href="{% url 'interests:update' object.pk %}" class="btn btn-warning">Изменить
+                                    интерес</a>
+                            {% endif %}
+                            {% if user.role == 'admin' %}
+                                <footer></footer>
+                                <a href="{% url 'interests:delete' object.pk %}" class="btn btn-danger">Удалить
+                                    интерес</a>
+                            {% endif %}
                         {% else %}
                             <a class="btn btn-primary" href="{% url 'users:login' %}?next={{ request.path }}">Вход для
                                 подписки</a>
