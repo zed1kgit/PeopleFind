@@ -2,8 +2,8 @@
 
 {% block content %}
     {% if object %}
-    	<div class="card-header">{{ object.name }}</div>
-    {% else %} 
+        <div class="card-header">{{ object.name }}</div>
+    {% else %}
         <div class="card-header">Регистрация</div>
     {% endif %}
     <div class="card-body">
@@ -12,6 +12,9 @@
             {{ form.as_p }}
             {% if object %}
                 <button type="submit" class="btn btn-success">Изменить</button>
+                {% if user.role == 'admin' %}
+                    <a href="{% url 'users:delete' object.slug %}" class="btn btn-danger">Удалить</a>
+                {% endif %}
             {% else %}
                 <button type="submit" class="btn btn-success">Регистрация</button>
             {% endif %}

@@ -1079,11 +1079,11 @@ footer {
     width: 100%;
 }
 
-.comment > .inner > aside.buttons {
+.inner > aside.buttons {
     display: none;
 }
 
-.comment > .inner:hover > aside.buttons {
+.inner:hover > aside.buttons {
     display: block;
 }
 

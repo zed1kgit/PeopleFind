@@ -22,7 +22,7 @@ def index(request):
         ).order_by('-related_count')[:4],
         "topic_objects_list": Topic.objects.annotate(
             related_count=Count('comments'),
-        ).order_by('-related_count')[:3],
+        ).order_by('-related_count')[:5],
     }
     return render(request, 'index.html', context)
 
@@ -72,6 +72,7 @@ class UserProfileView(DetailView):
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
+    context_object_name = 'object'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -94,6 +95,19 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
             return UserAdminForm(instance=self.object)
         else:
             return UserUpdateForm(instance=self.object)
+
+
+class UserDeleteView(LoginRequiredMixin, DeleteView):
+    model = User
+    template_name = 'users/delete.html'
+    success_url = reverse_lazy('users:index')
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset=queryset)
+        if self.request.user.is_authenticated:
+            if self.request.user.role in (UserRoles.ADMIN,):
+                return self.object
+        raise PermissionDenied()
 
 
 class SelfProfileView(LoginRequiredMixin, RedirectView):
