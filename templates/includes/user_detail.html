@@ -8,6 +8,9 @@
         <div class="profile-actions">
             {% if user.role == 'moderator' or user.role == 'admin' or user.pk == object.pk %}
             	<a class="btn btn-success" href="{% url 'users:update' object.slug %}">Изменить профиль</a>
+                {% if user.pk == object.pk %}
+                	<a class="btn btn-warning" href="{% url 'users:change-password' object.slug %}">Изменить пароль</a>
+                {% endif %} 
             {% endif %}
         </div>
     </div>

@@ -1,16 +1,20 @@
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
+from django.utils.http import urlsafe_base64_decode
 from django.views.generic import CreateView, UpdateView, ListView, DetailView, RedirectView, View, DeleteView
 from django.urls import reverse_lazy
+from django.utils.encoding import force_bytes
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 
 from Interests.models import Interest
 from topics.models import Topic
-from users.forms import UserRegisterForm, UserLoginForm, UserUpdateForm, UserForm, UserAdminForm
+from users.forms import UserRegisterForm, UserLoginForm, UserUpdateForm, UserForm, UserAdminForm, MyPasswordChangeForm
 from users.models import User, Notification, UserRoles
+from users.tokens import account_activation_token
 
 
 def index(request):
@@ -97,6 +101,17 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
             return UserUpdateForm(instance=self.object)
 
 
+class UserChangePasswordView(LoginRequiredMixin, PasswordChangeView):
+    template_name = 'users/user_form.html'
+    form_class = MyPasswordChangeForm
+    extra_context = {
+        'change_password': True,
+    }
+
+    def get_success_url(self):
+        return reverse_lazy('users:detail', kwargs={'slug': self.kwargs['slug']})
+
+
 class UserDeleteView(LoginRequiredMixin, DeleteView):
     model = User
     template_name = 'users/delete.html'
@@ -161,3 +176,21 @@ class NotificationReadView(LoginRequiredMixin, View):
         notification.viewed = True
         notification.save()
         return JsonResponse({'success': True})
+
+
+class ActivateAccountView(View):
+    def get(self, request, uidb64, token):
+        try:
+            uid = force_bytes(urlsafe_base64_decode(uidb64))
+            user = get_object_or_404(User, pk=uid)
+        except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+
+        if user is not None and account_activation_token.check_token(user, token):
+            user.is_email_verified = True
+            user.save()
+            messages.success(request, 'Ваш аккаунт успешно подтвержден.')
+            return redirect('users:login')
+        else:
+            messages.error(request, 'Ссылка для подтверждения недействительна.')
+            return redirect('users:register')

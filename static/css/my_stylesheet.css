@@ -240,11 +240,12 @@ h1 {
 .user-avatar {
     margin: 10px 30px 30px 0;
     float: left;
-    max-width: 300px;
+    max-width: 200px;
 }
 
 .user-avatar img {
     border-radius: 50%;
+    width: 200px;
 }
 
 .dropdown:hover .dropdown-menu {

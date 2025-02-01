@@ -26,6 +26,7 @@ class User(AbstractUser):
     is_active = models.BooleanField(default=True, verbose_name='Active')
     approved_users = models.ManyToManyField('self', symmetrical=False, related_name="approved", blank=True)
     denied_users = models.ManyToManyField('self', symmetrical=False, related_name="denied", blank=True)
+    is_email_verified = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

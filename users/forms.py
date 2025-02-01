@@ -31,3 +31,7 @@ class UserUpdateForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = User
         fields = ('avatar', 'email', 'name', 'slug', 'contacts', 'description',)
+
+class MyPasswordChangeForm(StyleFormMixin, PasswordChangeForm):
+    class Meta:
+        fields = ['old_password', 'new_password1', 'new_password2']
