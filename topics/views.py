@@ -78,7 +78,8 @@ class TopicDetailView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['object'] = get_object_or_404(Topic, slug=self.kwargs['slug'])
+        context['object'] = get_object_or_404(Interest, pk=self.kwargs['pk'])
+        context['topic'] = get_object_or_404(Topic, slug=self.kwargs['slug'])
         context['title'] = 'Топик'
         context['nav_title'] = 'Топик'
         return context

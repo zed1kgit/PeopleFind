@@ -1,9 +1,9 @@
 {% extends 'interests/interest_base.html' %}
 {% load my_tags %}
 {% block int_content %}
-    {% include 'includes/topic_inc.html' with object=object full='true' %}
+    {% include 'includes/topic_inc.html' with object=topic full='true' %}
     <div class="headline">комментарии
-        <div class="count">{% if object.comments.count != 0 %}{{ object.comments.count }}{% endif %} </div>
+        <div class="count">{% if topic.comments.count != 0 %}{{ topic.comments.count }}{% endif %} </div>
     </div>
     <div class="block">
         <div class="comments">
@@ -15,6 +15,6 @@
             {% endfor %}
             {% include 'includes/pagination_inc.html' %}
         </div>
-        {% include 'includes/write_comment_inc.html' with type='topic' id=object.pk %}
+        {% include 'includes/write_comment_inc.html' with type='topic' id=topic.pk %}
     </div>
 {% endblock %}
