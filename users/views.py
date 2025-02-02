@@ -94,11 +94,18 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy('users:profile', kwargs={'slug': self.kwargs['slug']})
 
-    def get_form(self, form_class=None):
+    def get_form_class(self, form_class=None):
         if self.request.user.role == UserRoles.ADMIN:
-            return UserAdminForm(instance=self.object)
+            return UserAdminForm
         else:
-            return UserUpdateForm(instance=self.object)
+            return UserUpdateForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({
+            'instance': self.object,
+        })
+        return kwargs
 
 
 class UserChangePasswordView(LoginRequiredMixin, PasswordChangeView):
