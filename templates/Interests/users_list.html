@@ -1,0 +1,18 @@
+{% extends 'interests/interest_base.html' %}
+{% load my_tags %}
+{% block int_content %}
+    <div class="headline">пользователи
+        <div class="count">{% if object_list.count != 0 %}{{ object_list.count }}{% endif %} </div>
+    </div>
+    <div class="block">
+        <div class="users">
+            {% if object_list.count == 0 %}
+                <p class="nothing-here">Нет пользователей</p>
+            {% endif %}
+            {% for user in object_list.all %}
+                {% include 'includes/user_info_inc.html' with object=user %}
+            {% endfor %}
+            {% include 'includes/pagination_inc.html' %}
+        </div>
+    </div>
+{% endblock %}

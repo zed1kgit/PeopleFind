@@ -180,3 +180,20 @@ class InterestCommentsListView(ListView):
         context['title'] = f'Комментарии: {context['object'].name}'
         context['nav_title'] = 'Комментарии'
         return context
+
+
+class InterestUsersListView(LoginRequiredMixin, ListView):
+    model = Interest
+    template_name = 'Interests/users_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Пользователи'
+        context['nav_title'] = 'Пользователи'
+        context['object'] = get_object_or_404(Interest, pk=self.kwargs['pk'])
+        return context
+
+    def get_queryset(self):
+        interest = get_object_or_404(Interest, pk=self.kwargs['pk'])
+        users = interest.members.all()
+        return users

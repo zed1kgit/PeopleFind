@@ -47,8 +47,8 @@
                     </div>
                 </div>
                 <div class="block">
-                    <div class="headline">участники
-                        <div class="count">{{ object.members.count }}</div>
+                    <div class="headline"><a href="{% url 'interests:users' object.pk %}">участники
+                        <div class="count">{{ object.members.count }}</div></a>
                     </div>
                     <div class="members">
                         {% for member in object.members.all|slice:":12" %}
