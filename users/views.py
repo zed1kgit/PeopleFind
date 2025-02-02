@@ -26,7 +26,7 @@ def index(request):
         ).order_by('-related_count')[:4],
         "topic_objects_list": Topic.objects.annotate(
             related_count=Count('comments'),
-        ).order_by('-related_count')[:5],
+        ).order_by('-related_count')[:3],
     }
     return render(request, 'index.html', context)
 
