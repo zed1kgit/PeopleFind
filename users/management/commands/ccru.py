@@ -2,24 +2,28 @@ import random
 
 from django.core.management import BaseCommand
 from django.db.models import Max
+from django.db.models.signals import post_save
 
 from users.models import User
+from users.signals import send_confirmation_email
 from Interests.models import Interest
 
 
 class Command(BaseCommand):
+    help = 'Создает случайных пользователей со случайными интересами.'
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '-n', '-number',
+            '--count',
             type=int,
             default=1,
-            help='Number of users to create'
+            help='Количество сгенерированных пользователей'
         )
 
     def handle(self, *args, **options):
-        number = options['number']
-        for i in range(number):
+        count = options['count']
+        post_save.disconnect(send_confirmation_email, sender=User)
+        for i in range(count):
             next_pk = User.objects.all().aggregate(Max('id'))['id__max'] + 1
             if next_pk is None:
                 next_pk = 1
@@ -41,3 +45,4 @@ class Command(BaseCommand):
             user.set_password('qwerty')
             user.save()
             print(f'User{next_pk} created')
+        post_save.connect(send_confirmation_email, sender=User)

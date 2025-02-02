@@ -9,6 +9,8 @@ def slug_generator(instance, new_slug=None):
         slug = new_slug
     else:
         slug = slugify(instance.title)
+    if len(slug) > 200:
+        slug = slug[:200]
     if Topic.objects.filter(slug=slug).exists():
         new_slug = f"{slug}-{uuid.uuid4().hex[:6]}"
         return slug_generator(instance, new_slug=new_slug)
