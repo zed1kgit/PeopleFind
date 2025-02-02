@@ -9,8 +9,17 @@ from Interests.models import Interest
 
 class Command(BaseCommand):
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '-n', '-number',
+            type=int,
+            default=1,
+            help='Number of users to create'
+        )
+
     def handle(self, *args, **options):
-        for i in range(10):
+        number = options['number']
+        for i in range(number):
             next_pk = User.objects.all().aggregate(Max('id'))['id__max'] + 1
             if next_pk is None:
                 next_pk = 1
@@ -19,6 +28,7 @@ class Command(BaseCommand):
                 name=f'User{next_pk}',
                 slug=f'user{next_pk}',
                 is_active=True,
+                is_email_verified=True,
             )
 
             interests = Interest.objects.all()

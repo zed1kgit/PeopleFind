@@ -1,10 +1,15 @@
+from celery import shared_task
+from django.urls import reverse_lazy
 from django.conf import settings
 from django.core.mail import EmailMessage
-from celery import shared_task
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
-from django.urls import reverse_lazy
+from django.urls import reverse
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
 
+
+from users.tokens import account_activation_token
 from users.models import User, Notification
 
 
