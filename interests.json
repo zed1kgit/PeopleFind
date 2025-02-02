@@ -1,0 +1,152 @@
+[
+  {
+    "model": "Interests.interest",
+    "pk": 1,
+    "fields": {
+      "name": "Игры",
+      "logo": "interests/9086413a443d6239301d96c45baf1215.jpg",
+      "description": "Играть в игры",
+      "members": []
+    }
+  },
+  {
+    "model": "Interests.interest",
+    "pk": 2,
+    "fields": {
+      "name": "Рисование",
+      "logo": "",
+      "description": "Любители рисовать",
+      "members": []
+    }
+  },
+  {
+    "model": "Interests.interest",
+    "pk": 3,
+    "fields": {
+      "name": "Спорт",
+      "logo": "",
+      "description": "Те кто любит заниматься спортом",
+      "members": []
+    }
+  },
+  {
+    "model": "Interests.interest",
+    "pk": 4,
+    "fields": {
+      "name": "Программирование",
+      "logo": "",
+      "description": "Люди которые увлекаются программированием",
+      "members": []
+    }
+  },
+  {
+    "model": "Interests.interest",
+    "pk": 5,
+    "fields": {
+      "name": "Фильмы",
+      "logo": "",
+      "description": "Если тебе нравится смотреть фильмы",
+      "members": []
+    }
+  },
+  {
+    "model": "Interests.interest",
+    "pk": 6,
+    "fields": {
+      "name": "Музыка",
+      "logo": "",
+      "description": "Любители слушать и создавать музыку",
+      "members": []
+    }
+  },
+  {
+    "model": "Interests.interest",
+    "pk": 7,
+    "fields": {
+      "name": "Кулинария",
+      "logo": "",
+      "description": "Те, кто любит готовить и экспериментировать с рецептами",
+      "members": []
+    }
+  },
+  {
+    "model": "Interests.interest",
+    "pk": 8,
+    "fields": {
+      "name": "Путешествия",
+      "logo": "",
+      "description": "Любители исследовать новые места и страны",
+      "members": []
+    }
+  },
+  {
+    "model": "Interests.interest",
+    "pk": 9,
+    "fields": {
+      "name": "Фотография",
+      "logo": "",
+      "description": "Увлечение фотосъёмкой и обработкой фотографий",
+      "members": []
+    }
+  },
+  {
+    "model": "Interests.interest",
+    "pk": 10,
+    "fields": {
+      "name": "Книги",
+      "logo": "",
+      "description": "Любители читать книги разных жанров",
+      "members": []
+    }
+  },
+  {
+    "model": "Interests.interest",
+    "pk": 11,
+    "fields": {
+      "name": "Садоводство",
+      "logo": "",
+      "description": "Уход за растениями и выращивание цветов",
+      "members": []
+    }
+  },
+  {
+    "model": "Interests.interest",
+    "pk": 12,
+    "fields": {
+      "name": "Рукоделие",
+      "logo": "",
+      "description": "Вязание, вышивание и другие виды рукоделия",
+      "members": []
+    }
+  },
+  {
+    "model": "Interests.interest",
+    "pk": 13,
+    "fields": {
+      "name": "Астрономия",
+      "logo": "",
+      "description": "Изучение звёзд, планет и космоса",
+      "members": []
+    }
+  },
+  {
+    "model": "Interests.interest",
+    "pk": 14,
+    "fields": {
+      "name": "Йога",
+      "logo": "",
+      "description": "Практика йоги для здоровья и гармонии",
+      "members": []
+    }
+  },
+  {
+    "model": "Interests.interest",
+    "pk": 15,
+    "fields": {
+      "name": "Дизайн",
+      "logo": "",
+      "description": "Графический, веб-дизайн и другие виды дизайна",
+      "members": []
+    }
+  }
+]
