@@ -182,7 +182,7 @@ class InterestCommentsListView(ListView):
         return context
 
 
-class InterestUsersListView(LoginRequiredMixin, ListView):
+class InterestUsersListView(ListView):
     model = Interest
     template_name = 'Interests/users_list.html'
 
