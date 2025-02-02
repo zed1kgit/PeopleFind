@@ -9,7 +9,7 @@ class Command(BaseCommand):
         admin = User.objects.create(
             email='admin@gmail.com',
             name='Admin',
-            nickname='admin',
+            slug='admin',
             role='admin',
             is_staff=True,
             is_superuser=True,
