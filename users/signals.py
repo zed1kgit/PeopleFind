@@ -1,53 +1,29 @@
+from functools import partial
+
 from django.conf import settings
-from django.core.mail import send_mail, EmailMessage
+from django.db import transaction
 from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
-from django.shortcuts import get_object_or_404
-from django.template.loader import render_to_string
-from django.urls import reverse
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
 
 from users.models import User
-from users.services import send_mutual_notification_task
-from users.tokens import account_activation_token
-
-
-# @receiver(m2m_changed, sender=User.approved_users.through)
-# def mutual_user_mail(sender, instance, action, reverse, model, pk_set, **kwargs):
-#     if action == 'post_add':
-#         for pk in pk_set:
-#             if instance in get_object_or_404(User, pk=pk).approved_users.all():
-#                 send_mutual_users_task(instance.pk, pk)
+from users.tasks import send_activation_email_task, send_mutual_notification_task, send_mutual_users_task
 
 
 @receiver(m2m_changed, sender=User.approved_users.through)
-def send_mutual_approval_notifications(sender, instance, action, reverse, model, pk_set, using, **kwargs):
-    if action == 'post_add':
-        for user_pk in pk_set:
-            other_user = get_object_or_404(User, pk=user_pk)
-            if instance in other_user.approved_users.all():
-                send_mutual_notification_task(instance, other_user)
+def notify_mutual_approval(sender, instance, action, reverse, pk_set, **kwargs):
+    """Когда пользователь одобряет другого, а тот уже одобрил его, создаем уведомления."""
+    if action != 'post_add' or reverse or not pk_set:
+        return
+    # пользователи из pk_set, которые уже одобрили instance
+    mutual_pks = User.objects.filter(pk__in=pk_set, approved_users=instance).values_list('pk', flat=True)
+    for other_pk in mutual_pks:
+        transaction.on_commit(partial(send_mutual_notification_task.delay, instance.pk, other_pk))
+        if settings.MUTUAL_EMAIL_ENABLED:
+            transaction.on_commit(partial(send_mutual_users_task.delay, instance.pk, other_pk))
 
 
 @receiver(post_save, sender=User)
-def send_confirmation_email(sender, instance, created, **kwargs):
-    if created:
-        token = account_activation_token.make_token(instance)
-        uid = urlsafe_base64_encode(force_bytes(instance.pk))
-        activation_link = f"http://localhost:8000{reverse('users:activate', kwargs={'uidb64': uid, 'token': token})}"
-        subject = 'Подтвердите ваш аккаунт'
-        message = render_to_string('mails/activation.html', {
-            'user': instance,
-            'activation_link': activation_link
-        })
-        from_email = settings.EMAIL_HOST_USER
-        to_email = [instance.email]
-        msg = EmailMessage(
-            subject=subject,
-            body=message,
-            from_email=from_email,
-            to=to_email,
-        )
-        msg.content_subtype = 'html'
-        msg.send()
+def send_confirmation_email(sender, instance, created, raw=False, **kwargs):
+    """Письмо со ссылкой подтверждения: только для новых неподтвержденных пользователей."""
+    if created and not raw and not instance.is_email_verified:
+        transaction.on_commit(partial(send_activation_email_task.delay, instance.pk))

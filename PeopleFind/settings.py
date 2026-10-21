@@ -161,6 +161,9 @@ else:
 
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL') or EMAIL_HOST_USER or 'noreply@peoplefind.local'
 
+# Отправлять письмо обоим пользователям при взаимном одобрении (уведомление на сайте создается всегда)
+MUTUAL_EMAIL_ENABLED = env_bool('MUTUAL_EMAIL_ENABLED', False)
+
 # --- Пароли -----------------------------------------------------------------
 
 AUTH_PASSWORD_VALIDATORS = [

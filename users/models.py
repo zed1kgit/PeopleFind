@@ -83,12 +83,23 @@ class User(AbstractUser):
 
 
 class Notification(models.Model):
+    """Уведомление пользователя.
+
+    message - обычный текст (в шаблоне экранируется). Если уведомление связано
+    с другим пользователем (например, взаимное одобрение), он хранится в from_user,
+    а ссылка на профиль строится в шаблоне, а не вшивается в текст как HTML.
+    """
     title = models.CharField(max_length=255)
-    message = models.CharField(max_length=255)
+    message = models.TextField(blank=True)
+    from_user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='+', **NULLABLE)
     date_created = models.DateTimeField(auto_now_add=True)
     viewed = models.BooleanField(default=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
     is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['-date_created']
+        indexes = [models.Index(fields=['user', 'viewed'])]
 
     def __str__(self):
         return f"{self.title}: {self.message}"
