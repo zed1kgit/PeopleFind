@@ -1,6 +1,6 @@
-from celery.worker.strategy import default
-from django.db import models
+from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
+from django.db import models
 from django.urls import reverse_lazy
 
 NULLABLE = {'blank': True, 'null': True}
@@ -10,6 +10,40 @@ class UserRoles(models.TextChoices):
     ADMIN = 'admin'
     MODERATOR = 'moderator'
     USER = 'user'
+
+
+class UserManager(BaseUserManager):
+    """Менеджер для модели без username: вход по email.
+
+    Стандартный UserManager из Django передаёт в модель username, которого здесь
+    нет, поэтому createsuperuser с ним не работает.
+    """
+    use_in_migrations = True
+
+    def _create_user(self, email, password, **extra_fields):
+        if not email:
+            raise ValueError('Email обязателен')
+        email = self.normalize_email(email)
+        extra_fields.setdefault('slug', email.split('@')[0][:12])
+        extra_fields.setdefault('name', extra_fields['slug'][:16])
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', False)
+        extra_fields.setdefault('is_superuser', False)
+        return self._create_user(email, password, **extra_fields)
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('role', UserRoles.ADMIN)
+        extra_fields.setdefault('is_email_verified', True)
+        if extra_fields['is_staff'] is not True or extra_fields['is_superuser'] is not True:
+            raise ValueError('У суперпользователя должны быть is_staff=True и is_superuser=True')
+        return self._create_user(email, password, **extra_fields)
 
 
 class User(AbstractUser):
@@ -27,6 +61,8 @@ class User(AbstractUser):
     approved_users = models.ManyToManyField('self', symmetrical=False, related_name="approved", blank=True)
     denied_users = models.ManyToManyField('self', symmetrical=False, related_name="denied", blank=True)
     is_email_verified = models.BooleanField(default=False)
+
+    objects = UserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
