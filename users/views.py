@@ -6,8 +6,8 @@ from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.utils.http import urlsafe_base64_decode
 from django.views.generic import CreateView, UpdateView, ListView, DetailView, RedirectView, View, DeleteView
 from django.urls import reverse_lazy
-from django.utils.encoding import force_bytes
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 
 from Interests.models import Interest
@@ -31,10 +31,11 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-class UserRegisterView(CreateView):
+class UserRegisterView(SuccessMessageMixin, CreateView):
     model = User
     form_class = UserRegisterForm
     success_url = reverse_lazy('users:login')
+    success_message = 'Мы отправили письмо со ссылкой для подтверждения почты.'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -188,14 +189,14 @@ class NotificationReadView(LoginRequiredMixin, View):
 class ActivateAccountView(View):
     def get(self, request, uidb64, token):
         try:
-            uid = force_bytes(urlsafe_base64_decode(uidb64))
-            user = get_object_or_404(User, pk=uid)
-        except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, UnicodeDecodeError, User.DoesNotExist):
             user = None
 
         if user is not None and account_activation_token.check_token(user, token):
             user.is_email_verified = True
-            user.save()
+            user.save(update_fields=['is_email_verified'])
             messages.success(request, 'Ваш аккаунт успешно подтвержден.')
             return redirect('users:login')
         else:
