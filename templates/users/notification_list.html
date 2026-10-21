@@ -9,7 +9,10 @@
         <div class="block">
             {% for notification in object_list %}
                 {% include 'includes/notification_inc.html' with object=notification %}
+            {% empty %}
+                <p class="nothing-here">Уведомлений пока нет</p>
             {% endfor %}
+            {% include 'includes/pagination_inc.html' %}
         </div>
     </div>
 {% endblock %}

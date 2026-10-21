@@ -12,7 +12,7 @@ from django.contrib import messages
 
 from Interests.models import Interest
 from topics.models import Topic
-from users.forms import UserRegisterForm, UserLoginForm, UserUpdateForm, UserForm, UserAdminForm, MyPasswordChangeForm
+from users.forms import UserRegisterForm, UserLoginForm, UserUpdateForm, UserAdminForm, MyPasswordChangeForm
 from users.models import User, Notification, UserRoles
 from users.tokens import account_activation_token
 
@@ -67,10 +67,11 @@ class UserLogoutView(LogoutView):
 class UserProfileView(DetailView):
     model = User
     context_object_name = 'object'
+    queryset = User.objects.prefetch_related('interests')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = self.get_object().name
+        context['title'] = self.object.name
         context['nav_title'] = 'Профиль'
         return context
 
@@ -81,7 +82,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = self.get_object().name
+        context['title'] = self.object.name
         context['nav_title'] = 'Профиль'
         return context
 
@@ -109,15 +110,17 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
         return kwargs
 
 
-class UserChangePasswordView(LoginRequiredMixin, PasswordChangeView):
+class UserChangePasswordView(LoginRequiredMixin, SuccessMessageMixin, PasswordChangeView):
     template_name = 'users/user_form.html'
     form_class = MyPasswordChangeForm
+    success_message = 'Пароль изменен.'
     extra_context = {
         'change_password': True,
     }
 
     def get_success_url(self):
-        return reverse_lazy('users:detail', kwargs={'slug': self.kwargs['slug']})
+        # раньше здесь был несуществующий маршрут users:detail (NoReverseMatch после смены пароля)
+        return reverse_lazy('users:profile', kwargs={'slug': self.request.user.slug})
 
 
 class UserDeleteView(LoginRequiredMixin, DeleteView):
@@ -141,8 +144,8 @@ class SelfProfileView(LoginRequiredMixin, RedirectView):
 
 class UserIdRedirectView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
-        user_slug = User.objects.get(pk=self.kwargs['pk']).slug
-        return reverse_lazy('users:profile', kwargs={'slug': user_slug})
+        user = get_object_or_404(User, pk=self.kwargs['pk'])
+        return reverse_lazy('users:profile', kwargs={'slug': user.slug})
 
 
 class MutualUsersListView(LoginRequiredMixin, ListView):
@@ -157,16 +160,13 @@ class MutualUsersListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         user = self.request.user
-        approved_users = user.approved_users.all()
-        mutual_users = []
-        for approved_user in approved_users:
-            if approved_user.approved_users.all().contains(user):
-                mutual_users.append(approved_user)
-        return mutual_users
+        # одобренные мной пользователи, которые одобрили меня (один запрос вместо цикла)
+        return user.approved_users.filter(approved_users=user).order_by('name')
 
 
 class NotificationsListView(LoginRequiredMixin, ListView):
     model = Notification
+    paginate_by = 20
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -175,14 +175,14 @@ class NotificationsListView(LoginRequiredMixin, ListView):
         return context
 
     def get_queryset(self):
-        return self.request.user.notifications.all().order_by('-date_created')
+        return self.request.user.notifications.select_related('from_user').order_by('-date_created')
 
 
 class NotificationReadView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
-        notification = Notification.objects.get(id=kwargs.get('pk'), user=self.request.user)
+        notification = get_object_or_404(Notification, id=kwargs.get('pk'), user=self.request.user)
         notification.viewed = True
-        notification.save()
+        notification.save(update_fields=['viewed'])
         return JsonResponse({'success': True})
 
 
