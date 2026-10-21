@@ -21,9 +21,7 @@ def index(request):
     context = {
         "title": "PeopleFind",
         "nav_title": "Главная",
-        "interest_objects_list": Interest.objects.annotate(
-            related_count=Count('members')
-        ).order_by('-related_count')[:4],
+        "interest_objects_list": Interest.objects.with_stats(request.user).order_by('-members_count', 'name')[:4],
         "topic_objects_list": Topic.objects.annotate(
             related_count=Count('comments'),
         ).order_by('-related_count')[:3],

@@ -5,6 +5,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, View, ListView
 
 from Interests.models import Interest
+from Interests.utils import get_interest_or_404, interest_sidebar_context
 from topics.forms import TopicForm
 from topics.models import Topic, Comment
 from users.models import UserRoles
@@ -16,7 +17,8 @@ class TopicCreateView(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['object'] = get_object_or_404(Interest, pk=self.kwargs['pk'])
+        context['object'] = get_interest_or_404(self.request, self.kwargs['pk'])
+        context.update(interest_sidebar_context(context['object']))
         context['title'] = context['object'].name
         context['nav_title'] = 'Создание'
         return context
@@ -78,7 +80,8 @@ class TopicDetailView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['object'] = get_object_or_404(Interest, pk=self.kwargs['pk'])
+        context['object'] = get_interest_or_404(self.request, self.kwargs['pk'])
+        context.update(interest_sidebar_context(context['object']))
         context['topic'] = get_object_or_404(Topic, slug=self.kwargs['slug'])
         context['title'] = 'Топик'
         context['nav_title'] = 'Топик'
@@ -101,7 +104,8 @@ class TopicListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['object'] = get_object_or_404(Interest, pk=self.kwargs['pk'])
-        context['title'] = f'Топики: {context['object'].name}'
+        context['object'] = get_interest_or_404(self.request, self.kwargs['pk'])
+        context.update(interest_sidebar_context(context['object']))
+        context['title'] = 'Топики: ' + context['object'].name
         context['nav_title'] = 'Топики'
         return context

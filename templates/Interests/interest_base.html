@@ -18,11 +18,11 @@
                     </div>
                     <div class="block">
                         {% if user.is_authenticated %}
-                            <button class="subscribe btn {% if user in object.members.all %}btn-danger{% else %}btn-success{% endif %}"
+                            <button class="subscribe btn {% if object.is_member %}btn-danger{% else %}btn-success{% endif %}"
                                     data-url="{% url 'interests:toggle-interest' object.id %}"
                                     data-interest-id="{{ object.id }}"
-                                    data-is-subscribed="{% if user in object.members.all %}true{% else %}false{% endif %}">
-                                {% if user in object.members.all %}
+                                    data-is-subscribed="{% if object.is_member %}true{% else %}false{% endif %}">
+                                {% if object.is_member %}
                                     Отписаться
                                 {% else %}
                                     Подписаться
@@ -48,10 +48,10 @@
                 </div>
                 <div class="block">
                     <div class="headline"><a href="{% url 'interests:users' object.pk %}">участники
-                        <div class="count">{{ object.members.count }}</div></a>
+                        <div class="count">{{ object.members_count }}</div></a>
                     </div>
                     <div class="members">
-                        {% for member in object.members.all|slice:":12" %}
+                        {% for member in members_preview %}
                             {% include 'includes/user_avatar.html' with object=member %}
                         {% endfor %}
                     </div>

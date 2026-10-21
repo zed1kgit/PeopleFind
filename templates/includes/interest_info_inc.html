@@ -7,17 +7,17 @@
     </a>
     <div class="info">
         <span class="grouped">
-            <span class="number">{{ object.members.count }}</span>
+            <span class="number">{{ object.members_count }}</span>
             <span class="value">подписано</span>
         </span>
     </div>
     <div class="info">
         {% if user.is_authenticated %}
-            <button class="subscribe btn {% if user in object.members.all %}btn-danger{% else %}btn-success{% endif %}"
+            <button class="subscribe btn {% if object.is_member %}btn-danger{% else %}btn-success{% endif %}"
                data-url="{% url 'interests:toggle-interest' object.id %}"
                data-interest-id="{{ object.id }}"
-               data-is-subscribed="{% if user in object.members.all %}true{% else %}false{% endif %}">
-                {% if user in object.members.all %}
+               data-is-subscribed="{% if object.is_member %}true{% else %}false{% endif %}">
+                {% if object.is_member %}
                     Отписаться
                 {% else %}
                     Подписаться

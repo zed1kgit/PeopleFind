@@ -1,36 +1,55 @@
 import random
 
-from django.db.models import Count
+from django.db.models import Count, Q
+from django.shortcuts import get_object_or_404
 
+from Interests.models import Interest
 from users.models import User
 
-
-def find_similar_users(current_user):
-    current_user_interests = current_user.interests.all()
-    current_user_exclude_pks = list(current_user.approved_users.values_list('pk', flat=True)) + list(
-        current_user.denied_users.values_list('pk', flat=True)) + [current_user.pk]
-    similar_users = User.objects.filter(interests__in=current_user_interests).exclude(id__in=current_user_exclude_pks)
-    similar_users = similar_users.annotate(common_interests_count=Count('interests'))
-    similar_users_list = list(similar_users.values_list('pk', 'common_interests_count'))
-    return similar_users_list
+CANDIDATES_LIMIT = 50
 
 
-def weighted_random_choice(similar_users_list):
-    total_weight = sum(weight for _, weight in similar_users_list)
-    rnd = random.uniform(0, total_weight)
-    upto = 0
-    for user_pk, weight in similar_users_list:
-        if upto + weight >= rnd:
-            return user_pk
-        upto += weight
-    assert False, "Shouldn't get here"
+def find_similar_users(current_user, limit=CANDIDATES_LIMIT):
+    """Кандидаты с общими интересами, которых текущий пользователь еще не оценил.
+
+    Раньше в Python загружались все подходящие пользователи при каждом клике.
+    Теперь БД отбирает не больше limit лучших (по числу общих интересов), а у
+    каждого объекта есть атрибут common_interests_count.
+    """
+    interest_ids = list(current_user.interests.values_list('pk', flat=True))
+    if not interest_ids:
+        return []
+    return list(
+        User.objects.filter(is_active=True, is_email_verified=True)
+        .exclude(pk=current_user.pk)
+        .exclude(pk__in=current_user.approved_users.values('pk'))
+        .exclude(pk__in=current_user.denied_users.values('pk'))
+        .annotate(common_interests_count=Count('interests', filter=Q(interests__in=interest_ids)))
+        .filter(common_interests_count__gt=0)
+        .order_by('-common_interests_count', '?')[:limit]
+    )
 
 
-def find_people (current_user):
-    similar_users_list = find_similar_users(current_user)
-    if len(similar_users_list) > 0:
-        found_user_pk = weighted_random_choice(similar_users_list)
-        found_user = User.objects.get(pk=found_user_pk)
-        return found_user
-    else:
-        return None
+def weighted_random_choice(candidates):
+    """Случайный кандидат; чем больше общих интересов, тем выше шанс."""
+    weights = [candidate.common_interests_count for candidate in candidates]
+    return random.choices(candidates, weights=weights, k=1)[0]
+
+
+def find_people(current_user):
+    candidates = find_similar_users(current_user)
+    return weighted_random_choice(candidates) if candidates else None
+
+
+def get_interest_or_404(request, pk):
+    """Интерес со счетчиком участников и признаком подписки текущего пользователя."""
+    return get_object_or_404(Interest.objects.with_stats(request.user), pk=pk)
+
+
+def interest_sidebar_context(interest):
+    """Данные для interest_base.html: боковая панель и счетчики."""
+    return {
+        'members_preview': interest.members.all()[:12],
+        'topics_count': interest.topics.count(),
+        'comments_count': interest.comments.count(),
+    }
