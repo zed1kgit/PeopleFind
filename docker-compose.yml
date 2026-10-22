@@ -1,0 +1,63 @@
+# Запуск всего проекта: docker compose up --build
+# Значения можно переопределить в файле .env (см. .env_sample).
+
+x-app-env: &app-env
+  DEBUG: ${DEBUG:-1}
+  SECRET_KEY: ${SECRET_KEY:-dev-secret-key-change-me}
+  ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1}
+  SITE_URL: ${SITE_URL:-http://localhost:8000}
+  SECURE_COOKIES: ${SECURE_COOKIES:-0}
+  SERVE_MEDIA: "1"
+  POSTGRES_DATABASE: peoplefind
+  POSTGRES_USER: peoplefind
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-peoplefind}
+  POSTGRES_HOST: db
+  REDIS_URL: redis://redis:6379/0
+  EMAIL_HOST_USER: ${EMAIL_HOST_USER:-}
+  EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD:-}
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: peoplefind
+      POSTGRES_USER: peoplefind
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-peoplefind}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U peoplefind -d peoplefind"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+
+  web:
+    build: .
+    command: sh -c "python manage.py migrate --noinput && gunicorn PeopleFind.wsgi:application --bind 0.0.0.0:8000 --workers 3"
+    environment: *app-env
+    ports:
+      - "8000:8000"
+    volumes:
+      - media:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  worker:
+    build: .
+    command: celery -A PeopleFind worker --loglevel=info
+    environment: *app-env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+volumes:
+  pgdata:
+  media:
