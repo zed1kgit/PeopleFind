@@ -22,9 +22,9 @@ def index(request):
         "title": "PeopleFind",
         "nav_title": "Главная",
         "interest_objects_list": Interest.objects.with_stats(request.user).order_by('-members_count', 'name')[:4],
-        "topic_objects_list": Topic.objects.annotate(
-            related_count=Count('comments'),
-        ).order_by('-related_count')[:3],
+        "topic_objects_list": Topic.objects.select_related('author').annotate(
+            comments_count=Count('comments'),
+        ).order_by('-comments_count', '-created_at')[:3],
     }
     return render(request, 'index.html', context)
 

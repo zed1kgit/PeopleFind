@@ -3,15 +3,14 @@
 {% block int_content %}
     {% include 'includes/topic_inc.html' with object=topic full='true' %}
     <div class="headline">комментарии
-        <div class="count">{% if topic.comments.count != 0 %}{{ topic.comments.count }}{% endif %} </div>
+        <div class="count">{% if topic.comments_count %}{{ topic.comments_count }}{% endif %} </div>
     </div>
     <div class="block">
         <div class="comments">
-            {% if object_list.count == 0 %}
-                <p class="nothing-here">Нет комментариев</p>
-            {% endif %}
-            {% for comment in object_list.all %}
+            {% for comment in object_list %}
                 {% include 'includes/comment_inc.html' with object=comment %}
+            {% empty %}
+                <p class="nothing-here">Нет комментариев</p>
             {% endfor %}
             {% include 'includes/pagination_inc.html' %}
         </div>
