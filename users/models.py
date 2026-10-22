@@ -2,6 +2,7 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse_lazy
+from django.utils.text import slugify
 
 NULLABLE = {'blank': True, 'null': True}
 
@@ -20,11 +21,20 @@ class UserManager(BaseUserManager):
     """
     use_in_migrations = True
 
+    def _unique_slug(self, email):
+        """slug из локальной части email: только допустимые для URL символы, уникальный."""
+        base = slugify(email.split('@')[0])[:8] or 'user'
+        slug, number = base, 1
+        while self.model.objects.filter(slug=slug).exists():
+            number += 1
+            slug = f'{base}{number}'
+        return slug[:12]
+
     def _create_user(self, email, password, **extra_fields):
         if not email:
             raise ValueError('Email обязателен')
         email = self.normalize_email(email)
-        extra_fields.setdefault('slug', email.split('@')[0][:12])
+        extra_fields.setdefault('slug', self._unique_slug(email))
         extra_fields.setdefault('name', extra_fields['slug'][:16])
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
