@@ -5,13 +5,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <title>{{ title|default:"PeopleFind" }}</title>
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/my_stylesheet.css' %}" rel="stylesheet">
     <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="{% static 'js/my_scripts.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}" defer></script>
+    <script src="{% static 'js/my_scripts.js' %}" defer></script>
 </head>
 <body>
 <header class="top_menu">
@@ -22,9 +23,12 @@
         </a>
     </div>
 
-    <div class="menu_logo">
-        <a class="text" href="{% url 'users:index' %}" title="{{ nav_title }}">{{ nav_title }}</a>
-    </div>
+    <nav class="menu_logo main-nav" aria-label="Основное меню">
+        <a class="text" href="{% url 'interests:list' %}">Интересы</a>
+        {% if user.is_authenticated %}
+            <a class="text" href="{% url 'interests:user-found' %}">Поиск людей</a>
+        {% endif %}
+    </nav>
 
     <div class="right">
         {% if user.is_authenticated %}
@@ -40,6 +44,7 @@
                 </a>
 
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    <li><a class="dropdown-item" href="{% url 'users:profile-redirect' %}">Мой профиль</a></li>
                     <li><a class="dropdown-item" href="{% url 'users:mutual-list' %}">Взаимные пользователи</a></li>
                     {% if user.role == 'moderator' or user.role == 'admin' %}
                         <li><a class="dropdown-item" href="{% url 'interests:create' %}">Создать интерес</a></li>

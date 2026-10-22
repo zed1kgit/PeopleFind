@@ -4,7 +4,7 @@
     <div>
         <header class="head">
             <h1>{{ object.name }}</h1>
-            <a href="{% url 'interests:list' %}" id="back">Назад</a>
+            <a href="{% block back_url %}{% url 'interests:detail' object.pk %}{% endblock %}" id="back">Назад</a>
         </header>
         <div class="int-menu">
             <div class="content">
@@ -48,7 +48,7 @@
                 </div>
                 <div class="block">
                     <div class="headline"><a href="{% url 'interests:users' object.pk %}">участники
-                        <div class="count">{{ object.members_count }}</div></a>
+                        <div class="count" data-members-for="{{ object.pk }}">{{ object.members_count }}</div></a>
                     </div>
                     <div class="members">
                         {% for member in members_preview %}

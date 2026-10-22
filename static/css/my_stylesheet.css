@@ -1138,3 +1138,18 @@ footer {
     width: 24px;
 }
 
+
+/* Сообщение об ошибке из скриптов */
+.toast-error {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    z-index: 1000;
+    max-width: calc(100vw - 32px);
+    padding: 10px 18px;
+    border-radius: 8px;
+    background: #b02a37;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}

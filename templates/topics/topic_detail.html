@@ -1,5 +1,6 @@
 {% extends 'Interests/interest_base.html' %}
 {% load my_tags %}
+{% block back_url %}{% url 'topics:list' object.pk %}{% endblock %}
 {% block int_content %}
     {% include 'includes/topic_inc.html' with object=topic full='true' %}
     <div class="headline">комментарии

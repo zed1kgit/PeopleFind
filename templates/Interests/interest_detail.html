@@ -1,5 +1,6 @@
 {% extends 'Interests/interest_base.html' %}
 {% load my_tags %}
+{% block back_url %}{% url 'interests:list' %}{% endblock %}
 {% block int_content %}
     <div class="block">
         {{ object.description|default:"Нет описания" }}

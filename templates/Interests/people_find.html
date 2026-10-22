@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% load my_tags %}
 {% block content %}
-    <div class="choose">
-        <a class="area deny"
+    <div class="choose" data-found-url="{% url 'interests:user-found' %}">
+        <a class="area deny" role="button" tabindex="0" aria-label="Отклонить"
            data-url="{% url 'interests:deny-user' %}"
            data-user-id="{{ found_user.pk }}">
             <div class="deny-mark"></div>
@@ -10,7 +10,7 @@
         <div id="user-detail">
             {% include 'includes/user_detail.html' with object=found_user %}
         </div>
-        <a class="area approve"
+        <a class="area approve" role="button" tabindex="0" aria-label="Одобрить"
            data-url="{% url 'interests:approve-user' %}"
            data-user-id="{{ found_user.pk }}">
             <div class="approve-mark"></div>

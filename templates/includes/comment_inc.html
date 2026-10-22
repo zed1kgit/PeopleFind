@@ -1,10 +1,11 @@
 {% load my_tags humanize %}
-<div class="comment" id="{{ object.pk }}">
+<div class="comment" id="comment-{{ object.pk }}">
     <div class="inner">
         <aside class="buttons">
             {% if user.is_authenticated and user == object.user or user.role == 'moderator' or user.role == 'admin' %}
                 <div class="main-controls">
-                    <span class="item-delete" title="Удалить" data-type="comment" data-id="{{ object.pk }}"></span>
+                    <span class="item-delete" role="button" tabindex="0" aria-label="Удалить" title="Удалить"
+                          data-type="comment" data-id="{{ object.pk }}" data-url="{% url 'topics:delete' %}"></span>
                 </div>
             {% endif %}
         </aside>
