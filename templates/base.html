@@ -1,40 +1,34 @@
 {% load static %}
 {% load my_tags %}
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ title }}</title>
-    <!-- Bootstrap CSS -->
+    <title>{{ title|default:"PeopleFind" }}</title>
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-
     <link href="{% static 'css/my_stylesheet.css' %}" rel="stylesheet">
-
-    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="{% static 'js/my_scripts.js' %}"></script>
-
-    <title>{{ tittle }}</title>
 </head>
 <body>
 <header class="top_menu">
     <div class="menu_logo">
-        <a class="logo-container" href="{% url "users:index" %}" title="PeopleFind">
-            <div class="logo"><img src="/static/logo.png" alt="PeopleFind" title="PeopleFind"></div>
+        <a class="logo-container" href="{% url 'users:index' %}" title="PeopleFind">
+            <div class="logo"><img src="{% static 'logo.png' %}" alt="PeopleFind" title="PeopleFind"></div>
             <div class="logo-text">PeopleFind</div>
         </a>
     </div>
 
     <div class="menu_logo">
-        <a class="text" href="{% url "users:index" %}" title="{{ nav_title }}">{{ nav_title }}</a>
+        <a class="text" href="{% url 'users:index' %}" title="{{ nav_title }}">{{ nav_title }}</a>
     </div>
 
     <div class="right">
         {% if user.is_authenticated %}
-            <a class="menu-icon notifications" data-count="{{ user.get_unread_notifications_count }}"
+            <a class="menu-icon notifications" data-count="{{ unread_notifications_count }}"
                href="{% url 'users:notifications' %}" title="Уведомления"></a>
 
             <div class="dropdown">
@@ -66,6 +60,14 @@
 </header>
 
 <section class="page">
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{% if message.level_tag == 'error' %}danger{% else %}{{ message.level_tag }}{% endif %}"
+                     role="alert">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
     {% block content %}
     {% endblock %}
 </section>

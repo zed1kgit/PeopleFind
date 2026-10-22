@@ -70,9 +70,6 @@ class User(AbstractUser):
     def __str__(self):
         return f'{self.name}'
 
-    def get_unread_notifications_count(self):
-        return self.notifications.filter(viewed=False).count()
-
     def get_absolute_url(self):
         return reverse_lazy('users:profile', kwargs={'slug': self.slug})
 

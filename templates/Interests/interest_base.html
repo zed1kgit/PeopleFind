@@ -14,7 +14,7 @@
             <aside class="menu">
                 <div>
                     <div class="int-logo">
-                        <img src="{{ object.logo|interest_media }}">
+                        <img src="{{ object.logo|interest_media }}" alt="{{ object.name }}">
                     </div>
                     <div class="block">
                         {% if user.is_authenticated %}
@@ -41,7 +41,7 @@
                                     интерес</a>
                             {% endif %}
                         {% else %}
-                            <a class="btn btn-primary" href="{% url 'users:login' %}?next={{ request.path }}">Вход для
+                            <a class="btn btn-primary" href="{% url 'users:login' %}?next={{ request.path|urlencode }}">Вход для
                                 подписки</a>
                         {% endif %}
                     </div>
