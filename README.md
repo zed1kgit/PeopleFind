@@ -1,115 +1,117 @@
 # PeopleFind
 
-Проект **PeopleFind** — это веб-приложение, разработанное на Django, предназначенное для поиска людей по интересам.
-Проект использует PostgreSQL в качестве основной базы данных, Redis для кэширования и Celery для выполнения фоновых
-задач.
+[![CI](https://github.com/zed1kgit/PeopleFind/actions/workflows/ci.yml/badge.svg)](https://github.com/zed1kgit/PeopleFind/actions/workflows/ci.yml)
+
+**PeopleFind** это веб-приложение на Django для поиска людей по интересам. Вы подписываетесь на интересы, сайт
+подбирает людей с общими увлечениями (чем больше общих интересов, тем выше шанс встретить человека), а при взаимном
+одобрении обоим приходит уведомление с контактами.
+
+<!-- Добавьте сюда скриншоты или GIF поиска, например: ![Поиск людей](docs/search.gif) -->
+
+## Возможности
+
+- Регистрация с подтверждением почты, вход по email, роли (пользователь, модератор, администратор).
+- Интересы: подписка, участники, комментарии и топики с обсуждениями.
+- Подбор людей с общими интересами: одобрить или отклонить; при взаимном одобрении приходит уведомление
+  (и, если включено, письмо).
+- Фоновые задачи на Celery (письма, уведомления), кэш и сессии в Redis.
+- Адаптивная вёрстка (телефон, планшет, десктоп).
 
 ## Технологии
 
-- **Django**: Веб-фреймворк для быстрой разработки на Python.
-- **PostgreSQL**: Реляционная база данных для хранения структурированных данных.
-- **Redis**: Используется для кэширования и в качестве брокера сообщений для Celery.
-- **Celery**: Библиотека для выполнения асинхронных и фоновых задач.
+Python 3.10+, Django 5, PostgreSQL (SQLite для разработки), Redis, Celery, Bootstrap 5, WhiteNoise, gunicorn.
 
-## Установка и настройка
+## Быстрый старт через Docker
 
-### Предварительные требования
+```bash
+cp .env_sample .env            # необязательно: значения по умолчанию подойдут для демо
+docker compose up --build
+```
 
-- Python 3.8+
-- PostgreSQL
-- Redis
-- Установленный `pip` и `virtualenv` (рекомендуется)
+Сайт откроется на <http://localhost:8000>. Docker поднимает сайт, PostgreSQL, Redis и Celery worker.
+Демо-данные:
 
-### Шаги для установки
+```bash
+docker compose exec web python manage.py loaddata interests.json
+docker compose exec web python manage.py ccsu             # администратор admin@example.com (пароль qwerty при DEBUG=1)
+docker compose exec web python manage.py ccru --count 20  # случайные пользователи (пароль qwerty)
+docker compose exec web python manage.py ccrtopics
+docker compose exec web python manage.py ccrcomments
+```
 
-1. **Создайте виртуальное окружение и установите зависимости**:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # Для Linux/MacOS
-   # venv\Scripts\activate    # Для Windows
-   pip install -r requirements.txt
-   ```
+## Запуск без Docker
 
-2. **Настройка проекта**
-    1. Скопируйте файл `.env_sample` в `.env`:
-       ```bash
-       cp .env_sample .env
-       ```
-    2. Заполните файл .env своими значениями:
+PostgreSQL и Redis не обязательны: без них проект использует SQLite, локальный кэш и выполняет задачи Celery сразу
+в процессе сайта (письма при этом выводятся в консоль).
 
-       **PostgreSQL**: Укажите данные для подключения к вашей базе данных.
+```bash
+python -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
+pip install -r requirements-dev.txt
+cp .env_sample .env             # DEBUG=1 уже включён
 
-       **Redis**: Укажите адрес Redis-сервера, если используете кэширование.
+python manage.py migrate
+python manage.py loaddata interests.json   # необязательно: базовые интересы
+python manage.py ccsu                      # администратор
+python manage.py runserver
+```
 
-       **Email**: Укажите данные для отправки электронных писем (должна использоваться gmail почта).
+Чтобы использовать PostgreSQL и Redis, заполните в `.env` переменные `POSTGRES_*` и `REDIS_URL`. Базу данных
+можно создать командой `python manage.py ccdb`. При заданном `REDIS_URL` задачи выполняет воркер:
 
-3. **Создайте базу данных в PostgreSQL путём ввода команды из корневой папки проекта**:
-     ```bash
-     python manage.py ссdb
-     ```
+```bash
+python manage.py runcelery      # или: celery -A PeopleFind worker -l info
+```
 
-4. **Создайте и примените миграции**:
-   ```bash
-   python manage.py makemigrations
-   python manage.py migrate
-   ```
+## Настройки (переменные окружения)
 
-5. **Создайте суперпользователя**:
-   ```bash
-   python manage.py ccsu
-   ```
+| Переменная                             | Назначение                                                                  |
+|----------------------------------------|-----------------------------------------------------------------------------|
+| `DEBUG`                                | `1` для разработки. При `0` обязателен `SECRET_KEY`                          |
+| `SECRET_KEY`                           | секретный ключ Django                                                        |
+| `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`| списки через запятую                                                         |
+| `SITE_URL`                             | адрес сайта для ссылок в письмах                                             |
+| `POSTGRES_DATABASE/USER/PASSWORD/HOST/PORT` | если `POSTGRES_DATABASE` пуст, используется SQLite                      |
+| `REDIS_URL`                            | кэш, сессии и брокер Celery; если пуст, задачи выполняются сразу             |
+| `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_HOST`, `EMAIL_PORT` | SMTP; без `EMAIL_HOST_USER` письма идут в консоль |
+| `MUTUAL_EMAIL_ENABLED`                 | `1`: отправлять письмо при взаимном одобрении                                |
+| `SERVE_MEDIA`, `SECURE_COOKIES`        | отдача медиа через Django и Secure-cookie                                    |
 
-6. **Запустите Redis в отдельной командной строке**:
-   ```bash
-   redis-server
-   ```
+## Тесты и качество кода
 
-7. **Запустите Celery worker в отдельной командной строке**:
-   ```bash
-   python manage.py runcelery
-   ```
+```bash
+python manage.py test
+ruff check .
+```
 
-8. (опционально)**Установить базовую фикстуру интересов**:
-   ```bash
-   python manage.py loaddata interests.json
-   ```
+Те же проверки запускает GitHub Actions на каждый пуш. Миграции хранятся в репозитории: после изменения моделей
+выполните `python manage.py makemigrations` и закоммитьте результат (CI проверяет это командой
+`makemigrations --check`). Для проверок перед коммитом можно установить `pre-commit install`.
 
-9. **Запустите сервер разработки**:
-   ```bash
-   python manage.py runserver
-   ```
+## Команды для тестовых данных
 
-   Теперь проект будет доступен по адресу: [http://127.0.0.1:8000](http://127.0.0.1:8000).
+- `ccsu [--email ... --password ...]`: администратор (пароль из `--password`, `ADMIN_PASSWORD` или `qwerty` при DEBUG).
+- `ccru --count 5`: случайные пользователи со случайными интересами (только при `DEBUG=1`, пароль `qwerty`).
+- `ccrtopics --count 10 [--user_id N] [--interest_id N]`: случайные топики.
+- `ccrcomments --count 10 [--user_id N] [--interest_id N | --topic_id N]`: случайные комментарии.
 
-## Использование
+## Структура проекта
 
-- **Админка Django**: Доступна по адресу [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin). Используйте учетные
-  данные суперпользователя для входа.
+```
+PeopleFind/   настройки, URL, Celery
+users/        пользователи, регистрация и подтверждение почты, уведомления, задачи Celery
+Interests/    интересы, подписки, подбор людей
+topics/       топики и комментарии
+templates/    шаблоны, static/ стили и скрипты (без jQuery)
+```
 
-## Команды для тестирования
+## Планы
 
-1. **Создание случайных пользователей**
-   ```bash
-   python manage.py ccru --count 5
-   ```
-   Параметры:
-    - --count: количество созданных пользователей (по умолчанию: 5)
-2. **Создание случайных топиков**
-    ```bash
-   python manage.py ccrtopics 
-    ```
-   Параметры:
-    - --count: количество созданных топиков (по умолчанию: 10)
-    - --user_id: если ввести id пользователя, топики будут сгенерированы от пользователя с указанным id
-    - --interest_id: если ввести id интереса, топики будут сгенерированы для интереса с указанным id
-3. **Создание случайных комментариев**
-    ```bash
-   python manage.py ccrcomments
-    ```
-   Параметры:
-    - --count: количество созданных комментариев (по умолчанию: 10)
-    - --user_id: если ввести id пользователя, комментарии будут сгенерированы от пользователя с указанным id
-    - одно из двух (--interest_id, --topic_id): если ввести id, комментарии будут сгенерированы для интереса или топика
-      с указанным id
+- REST API (Django REST Framework) и документация OpenAPI
+- Личные сообщения между пользователями со взаимным одобрением
+- Ограничение частоты запросов на вход и регистрацию
+- Настройки приватности профиля, жалобы и блокировки
 
-*Для всех созданных пользователей устанавливается пароль qwerty
+## Лицензия
+
+[MIT](LICENSE)
