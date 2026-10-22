@@ -1,6 +1,7 @@
 @font-face {
     font-family: "Comfortaa";
     font-style: normal;
+    font-display: swap;
     font-weight: 400;
     src: local("Comfortaa Regular"), local("Comfortaa-Regular"),
     url(https://fonts.gstatic.com/s/comfortaa/v10/-DackuIFgo7Hfy3rR14C3xJtnKITppOI_IvcXXDNrsc.woff2) format("woff2");
@@ -10,6 +11,7 @@
 @font-face {
     font-family: "Comfortaa";
     font-style: normal;
+    font-display: swap;
     font-weight: 400;
     src: local("Comfortaa Regular"), local("Comfortaa-Regular"),
     url(https://fonts.gstatic.com/s/comfortaa/v10/qLBu5CQmSMt1H43OiWJ77VtXRa8TVwTICgirnJhmVJw.woff2) format("woff2");
@@ -19,6 +21,7 @@
 @font-face {
     font-family: "Comfortaa";
     font-style: normal;
+    font-display: swap;
     font-weight: 700;
     src: local("Comfortaa Bold"), local("Comfortaa-Bold"),
     url(https://fonts.gstatic.com/s/comfortaa/v10/fND5XPYKrF2tQDwwfWZJI5X5f-9o1vgP2EXwfjgl7AY.woff2) format("woff2");
@@ -28,6 +31,7 @@
 @font-face {
     font-family: "Comfortaa";
     font-style: normal;
+    font-display: swap;
     font-weight: 700;
     src: local("Comfortaa Bold"), local("Comfortaa-Bold"),
     url(https://fonts.gstatic.com/s/comfortaa/v10/fND5XPYKrF2tQDwwfWZJI-gdm0LZdjqr5-oayXSOefg.woff2) format("woff2");
@@ -69,8 +73,13 @@
 
 body {
     color: #fff;
+    background-color: #181332;
     font-family: "Comfortaa", sans-serif;
-    font-size: 13px;
+    font-size: 14px;
+}
+
+img {
+    max-width: 100%;
 }
 
 header {
@@ -89,11 +98,12 @@ body:after {
     background-position-x: center;
     background-size: cover;
     background-color: rgba(38, 30, 74, 0.5);
+    background-image: linear-gradient(160deg, rgba(88, 62, 160, 0.35) 0, rgba(24, 19, 50, 0) 60%);
 }
 
 section a {
     text-decoration: none;
-    color: rgba(167, 148, 210, 1);
+    color: rgba(190, 174, 228, 1);
     transition: 0s ease, transform 0.3s ease, color 0.3s ease;
 }
 
@@ -308,7 +318,7 @@ h1 {
 }
 
 .headline > a:before {
-    color: rgba(167, 148, 210, 1);
+    color: rgba(190, 174, 228, 1);
     position: absolute;
     top: 0;
     right: 10px;
@@ -445,7 +455,7 @@ h1 {
     align-items: center;
     justify-content: center;
     padding: 2px 12px;
-    color: rgba(167, 148, 210, 1);
+    color: rgba(190, 174, 228, 1);
 }
 
 .interest:before {
@@ -621,7 +631,7 @@ h1 {
 }
 
 .info .btn {
-    font-size: 10px;
+    font-size: 12px;
     padding-top: 2%;
     padding-bottom: 2%;
 }
@@ -796,9 +806,9 @@ h1 {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: #7b8084;
+    color: rgba(172, 162, 193, 1);
     display: inline;
-    font-size: 11px;
+    font-size: 12px;
     padding-left: 10px;
 }
 
@@ -910,9 +920,9 @@ div.body {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: #7b8084;
+    color: rgba(172, 162, 193, 1);
     display: inline;
-    font-size: 11px;
+    font-size: 12px;
     padding-left: 10px;
 }
 
@@ -1081,10 +1091,6 @@ footer {
 }
 
 .inner > aside.buttons {
-    display: none;
-}
-
-.inner:hover > aside.buttons {
     display: block;
 }
 
@@ -1105,7 +1111,7 @@ footer {
 }
 
 .buttons .item-delete {
-    color: rgba(167, 148, 210, 1);
+    color: rgba(190, 174, 228, 1);
     margin-left: 15px;
     cursor: pointer;
 }
@@ -1116,7 +1122,7 @@ footer {
 }
 
 .buttons .item-delete:hover {
-    collor: rgba(45, 137, 210, 1);
+    color: rgba(45, 137, 210, 1);
 }
 
 .buttons .item-delete:before {
@@ -1152,4 +1158,190 @@ footer {
     background: #b02a37;
     color: #fff;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* ---------- Общие улучшения ---------- */
+
+/* Ссылки в шапке были подчеркнуты: правило text-decoration стояло только для section a */
+.top_menu a {
+    text-decoration: none;
+}
+
+.main-nav {
+    display: flex;
+    gap: 20px;
+}
+
+.main-nav a.text:hover {
+    color: rgba(45, 137, 210, 1);
+}
+
+/* Логотипы разного формата не должны сплющиваться */
+img.interest-logo,
+.int-logo img {
+    object-fit: cover;
+}
+
+:focus-visible {
+    outline: 2px solid rgba(45, 137, 210, 1);
+    outline-offset: 2px;
+}
+
+/* Ошибки валидации форм Django (<ul class="errorlist">) */
+.errorlist {
+    list-style: none;
+    margin: 0 0 6px;
+    padding: 0;
+    color: #ff9aa2;
+}
+
+.messages .alert {
+    margin: 0 0 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* ---------- Раскладка: flex/grid вместо float и процентных ширин ---------- */
+
+.detailed {
+    float: none;
+    width: auto;
+    flex: 1 1 220px;
+    max-width: 280px;
+}
+
+.int-menu {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 260px;
+    gap: 24px;
+    align-items: start;
+}
+
+.int-menu:after {
+    content: none;
+}
+
+.content {
+    width: auto;
+    margin-right: 0;
+    float: none;
+    clear: none;
+}
+
+.menu {
+    width: auto;
+    float: none;
+    margin-bottom: 0;
+}
+
+.choose > div {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+}
+
+/* ---------- Планшеты и телефоны ---------- */
+
+@media (max-width: 1000px) {
+    .top_menu > *:first-child {
+        margin-left: 12px;
+    }
+
+    .top_menu > *:last-child {
+        margin-right: 12px;
+    }
+
+    .top_menu {
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 800px) {
+    .page {
+        margin: 12px 8px;
+        padding: 8px 10px;
+        min-height: auto;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .int-menu {
+        grid-template-columns: 1fr;
+    }
+
+    .c-8 > .column {
+        width: calc(25% - 10px);
+    }
+
+    .c-8 > .column:nth-child(8n+1) {
+        clear: none;
+    }
+
+    .c-8 > .column:nth-child(4n+1) {
+        clear: left;
+    }
+
+    .area {
+        width: 12%;
+        margin: 0.25em;
+    }
+
+    .approve {
+        margin-left: 0.25em;
+    }
+}
+
+@media (max-width: 520px) {
+    .logo-text,
+    .user-dropdown .nickname {
+        display: none;
+    }
+
+    .main-nav {
+        gap: 12px;
+    }
+
+    .detailed {
+        flex-basis: 100%;
+        max-width: none;
+    }
+
+    .c-8 > .column {
+        width: calc(33.333% - 10px);
+    }
+
+    .c-8 > .column:nth-child(4n+1) {
+        clear: none;
+    }
+
+    .c-8 > .column:nth-child(3n+1) {
+        clear: left;
+    }
+
+    .comment > .inner div.body {
+        margin-left: 0;
+    }
+}
+
+.main-nav a.text {
+    white-space: nowrap;
+}
+
+@media (max-width: 800px) {
+    .int-logo img {
+        max-width: 160px;
+    }
+}
+
+@media (max-width: 520px) {
+    .main-nav a.text {
+        font-size: 14px;
+    }
 }
