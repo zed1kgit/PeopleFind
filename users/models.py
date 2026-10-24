@@ -22,13 +22,15 @@ class UserManager(BaseUserManager):
     use_in_migrations = True
 
     def _unique_slug(self, email):
-        """slug из локальной части email: только допустимые для URL символы, уникальный."""
-        base = slugify(email.split('@')[0])[:8] or 'user'
+        """slug из локальной части email: только допустимые для URL символы, уникальный, до 12 символов."""
+        max_length = 12
+        base = slugify(email.split('@')[0])[:max_length] or 'user'
         slug, number = base, 1
         while self.model.objects.filter(slug=slug).exists():
             number += 1
-            slug = f'{base}{number}'
-        return slug[:12]
+            suffix = str(number)
+            slug = base[:max_length - len(suffix)] + suffix
+        return slug
 
     def _create_user(self, email, password, **extra_fields):
         if not email:
