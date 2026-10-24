@@ -4,7 +4,7 @@
     <div>
         <header class="head">
             <h1>{{ object.name }}</h1>
-            <a href="{% url 'interests:list' %}" id="back">Назад</a>
+            <a href="{% block back_url %}{% url 'interests:detail' object.pk %}{% endblock %}" id="back">Назад</a>
         </header>
         <div class="int-menu">
             <div class="content">
@@ -14,15 +14,15 @@
             <aside class="menu">
                 <div>
                     <div class="int-logo">
-                        <img src="{{ object.logo|interest_media }}">
+                        <img src="{{ object.logo|interest_media }}" alt="{{ object.name }}">
                     </div>
                     <div class="block">
                         {% if user.is_authenticated %}
-                            <button class="subscribe btn {% if user in object.members.all %}btn-danger{% else %}btn-success{% endif %}"
+                            <button class="subscribe btn {% if object.is_member %}btn-danger{% else %}btn-success{% endif %}"
                                     data-url="{% url 'interests:toggle-interest' object.id %}"
                                     data-interest-id="{{ object.id }}"
-                                    data-is-subscribed="{% if user in object.members.all %}true{% else %}false{% endif %}">
-                                {% if user in object.members.all %}
+                                    data-is-subscribed="{% if object.is_member %}true{% else %}false{% endif %}">
+                                {% if object.is_member %}
                                     Отписаться
                                 {% else %}
                                     Подписаться
@@ -41,17 +41,17 @@
                                     интерес</a>
                             {% endif %}
                         {% else %}
-                            <a class="btn btn-primary" href="{% url 'users:login' %}?next={{ request.path }}">Вход для
+                            <a class="btn btn-primary" href="{% url 'users:login' %}?next={{ request.path|urlencode }}">Вход для
                                 подписки</a>
                         {% endif %}
                     </div>
                 </div>
                 <div class="block">
                     <div class="headline"><a href="{% url 'interests:users' object.pk %}">участники
-                        <div class="count">{{ object.members.count }}</div></a>
+                        <div class="count" data-members-for="{{ object.pk }}">{{ object.members_count }}</div></a>
                     </div>
                     <div class="members">
-                        {% for member in object.members.all|slice:":12" %}
+                        {% for member in members_preview %}
                             {% include 'includes/user_avatar.html' with object=member %}
                         {% endfor %}
                     </div>

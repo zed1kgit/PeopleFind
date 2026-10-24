@@ -1,7 +1,8 @@
-from celery.worker.strategy import default
-from django.db import models
+from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
+from django.db import models
 from django.urls import reverse_lazy
+from django.utils.text import slugify
 
 NULLABLE = {'blank': True, 'null': True}
 
@@ -10,6 +11,51 @@ class UserRoles(models.TextChoices):
     ADMIN = 'admin'
     MODERATOR = 'moderator'
     USER = 'user'
+
+
+class UserManager(BaseUserManager):
+    """Менеджер для модели без username: вход по email.
+
+    Стандартный UserManager из Django передаёт в модель username, которого здесь
+    нет, поэтому createsuperuser с ним не работает.
+    """
+    use_in_migrations = True
+
+    def _unique_slug(self, email):
+        """slug из локальной части email: только допустимые для URL символы, уникальный, до 12 символов."""
+        max_length = 12
+        base = slugify(email.split('@')[0])[:max_length] or 'user'
+        slug, number = base, 1
+        while self.model.objects.filter(slug=slug).exists():
+            number += 1
+            suffix = str(number)
+            slug = base[:max_length - len(suffix)] + suffix
+        return slug
+
+    def _create_user(self, email, password, **extra_fields):
+        if not email:
+            raise ValueError('Email обязателен')
+        email = self.normalize_email(email)
+        extra_fields.setdefault('slug', self._unique_slug(email))
+        extra_fields.setdefault('name', extra_fields['slug'][:16])
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', False)
+        extra_fields.setdefault('is_superuser', False)
+        return self._create_user(email, password, **extra_fields)
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('role', UserRoles.ADMIN)
+        extra_fields.setdefault('is_email_verified', True)
+        if extra_fields['is_staff'] is not True or extra_fields['is_superuser'] is not True:
+            raise ValueError('У суперпользователя должны быть is_staff=True и is_superuser=True')
+        return self._create_user(email, password, **extra_fields)
 
 
 class User(AbstractUser):
@@ -28,14 +74,13 @@ class User(AbstractUser):
     denied_users = models.ManyToManyField('self', symmetrical=False, related_name="denied", blank=True)
     is_email_verified = models.BooleanField(default=False)
 
+    objects = UserManager()
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     def __str__(self):
         return f'{self.name}'
-
-    def get_unread_notifications_count(self):
-        return self.notifications.filter(viewed=False).count()
 
     def get_absolute_url(self):
         return reverse_lazy('users:profile', kwargs={'slug': self.slug})
@@ -47,12 +92,23 @@ class User(AbstractUser):
 
 
 class Notification(models.Model):
+    """Уведомление пользователя.
+
+    message - обычный текст (в шаблоне экранируется). Если уведомление связано
+    с другим пользователем (например, взаимное одобрение), он хранится в from_user,
+    а ссылка на профиль строится в шаблоне, а не вшивается в текст как HTML.
+    """
     title = models.CharField(max_length=255)
-    message = models.CharField(max_length=255)
+    message = models.TextField(blank=True)
+    from_user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='+', **NULLABLE)
     date_created = models.DateTimeField(auto_now_add=True)
     viewed = models.BooleanField(default=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
     is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['-date_created']
+        indexes = [models.Index(fields=['user', 'viewed'])]
 
     def __str__(self):
         return f"{self.title}: {self.message}"

@@ -185,6 +185,19 @@ fabric.properties
 # idea folder, uncomment if you don't need it
 .idea
 
-**/migrations/
 /temp/
 dump.rdb
+
+# Local environment and databases
+.env
+db.sqlite3
+
+# User uploads (demo avatars in media/sample are tracked)
+media/*
+!media/sample/
+
+# collectstatic output
+staticfiles/
+
+# Caches
+.ruff_cache/

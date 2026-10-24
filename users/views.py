@@ -6,13 +6,13 @@ from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.utils.http import urlsafe_base64_decode
 from django.views.generic import CreateView, UpdateView, ListView, DetailView, RedirectView, View, DeleteView
 from django.urls import reverse_lazy
-from django.utils.encoding import force_bytes
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 
 from Interests.models import Interest
 from topics.models import Topic
-from users.forms import UserRegisterForm, UserLoginForm, UserUpdateForm, UserForm, UserAdminForm, MyPasswordChangeForm
+from users.forms import UserRegisterForm, UserLoginForm, UserUpdateForm, UserAdminForm, MyPasswordChangeForm
 from users.models import User, Notification, UserRoles
 from users.tokens import account_activation_token
 
@@ -21,20 +21,19 @@ def index(request):
     context = {
         "title": "PeopleFind",
         "nav_title": "Главная",
-        "interest_objects_list": Interest.objects.annotate(
-            related_count=Count('members')
-        ).order_by('-related_count')[:4],
-        "topic_objects_list": Topic.objects.annotate(
-            related_count=Count('comments'),
-        ).order_by('-related_count')[:3],
+        "interest_objects_list": Interest.objects.with_stats(request.user).order_by('-members_count', 'name')[:4],
+        "topic_objects_list": Topic.objects.select_related('author').annotate(
+            comments_count=Count('comments'),
+        ).order_by('-comments_count', '-created_at')[:3],
     }
     return render(request, 'index.html', context)
 
 
-class UserRegisterView(CreateView):
+class UserRegisterView(SuccessMessageMixin, CreateView):
     model = User
     form_class = UserRegisterForm
     success_url = reverse_lazy('users:login')
+    success_message = 'Мы отправили письмо со ссылкой для подтверждения почты.'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -66,10 +65,11 @@ class UserLogoutView(LogoutView):
 class UserProfileView(DetailView):
     model = User
     context_object_name = 'object'
+    queryset = User.objects.prefetch_related('interests')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = self.get_object().name
+        context['title'] = self.object.name
         context['nav_title'] = 'Профиль'
         return context
 
@@ -80,7 +80,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = self.get_object().name
+        context['title'] = self.object.name
         context['nav_title'] = 'Профиль'
         return context
 
@@ -108,15 +108,17 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
         return kwargs
 
 
-class UserChangePasswordView(LoginRequiredMixin, PasswordChangeView):
+class UserChangePasswordView(LoginRequiredMixin, SuccessMessageMixin, PasswordChangeView):
     template_name = 'users/user_form.html'
     form_class = MyPasswordChangeForm
+    success_message = 'Пароль изменен.'
     extra_context = {
         'change_password': True,
     }
 
     def get_success_url(self):
-        return reverse_lazy('users:detail', kwargs={'slug': self.kwargs['slug']})
+        # раньше здесь был несуществующий маршрут users:detail (NoReverseMatch после смены пароля)
+        return reverse_lazy('users:profile', kwargs={'slug': self.request.user.slug})
 
 
 class UserDeleteView(LoginRequiredMixin, DeleteView):
@@ -140,8 +142,8 @@ class SelfProfileView(LoginRequiredMixin, RedirectView):
 
 class UserIdRedirectView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
-        user_slug = User.objects.get(pk=self.kwargs['pk']).slug
-        return reverse_lazy('users:profile', kwargs={'slug': user_slug})
+        user = get_object_or_404(User, pk=self.kwargs['pk'])
+        return reverse_lazy('users:profile', kwargs={'slug': user.slug})
 
 
 class MutualUsersListView(LoginRequiredMixin, ListView):
@@ -156,16 +158,13 @@ class MutualUsersListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         user = self.request.user
-        approved_users = user.approved_users.all()
-        mutual_users = []
-        for approved_user in approved_users:
-            if approved_user.approved_users.all().contains(user):
-                mutual_users.append(approved_user)
-        return mutual_users
+        # одобренные мной пользователи, которые одобрили меня (один запрос вместо цикла)
+        return user.approved_users.filter(approved_users=user).order_by('name')
 
 
 class NotificationsListView(LoginRequiredMixin, ListView):
     model = Notification
+    paginate_by = 20
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -174,28 +173,28 @@ class NotificationsListView(LoginRequiredMixin, ListView):
         return context
 
     def get_queryset(self):
-        return self.request.user.notifications.all().order_by('-date_created')
+        return self.request.user.notifications.select_related('from_user').order_by('-date_created')
 
 
 class NotificationReadView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
-        notification = Notification.objects.get(id=kwargs.get('pk'), user=self.request.user)
+        notification = get_object_or_404(Notification, id=kwargs.get('pk'), user=self.request.user)
         notification.viewed = True
-        notification.save()
+        notification.save(update_fields=['viewed'])
         return JsonResponse({'success': True})
 
 
 class ActivateAccountView(View):
     def get(self, request, uidb64, token):
         try:
-            uid = force_bytes(urlsafe_base64_decode(uidb64))
-            user = get_object_or_404(User, pk=uid)
-        except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, UnicodeDecodeError, User.DoesNotExist):
             user = None
 
         if user is not None and account_activation_token.check_token(user, token):
             user.is_email_verified = True
-            user.save()
+            user.save(update_fields=['is_email_verified'])
             messages.success(request, 'Ваш аккаунт успешно подтвержден.')
             return redirect('users:login')
         else:

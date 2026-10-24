@@ -1,7 +1,7 @@
 from django import forms
 
-from topics.models import Topic, Comment
 from Interests.forms import StyleFormMixin
+from topics.models import Topic
 
 
 class TopicForm(StyleFormMixin, forms.ModelForm):

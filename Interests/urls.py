@@ -2,10 +2,11 @@ from django.urls import path
 from django.views.decorators.cache import never_cache
 
 from Interests.apps import InterestsConfig
-from Interests.views import InterestCreateView, InterestUpdateView, InterestDeleteView, InterestDetailView, \
-    InterestListView, \
-    FoundSimilarUserView, DenySimilarUserView, FindSimilarUser, ApproveSimilarUserView, ToggleInterestView, \
-    InterestCommentsListView, InterestUsersListView
+from Interests.views import (
+    ApproveSimilarUserView, DenySimilarUserView, FoundSimilarUserView, InterestCommentsListView,
+    InterestCreateView, InterestDeleteView, InterestDetailView, InterestListView, InterestUpdateView,
+    InterestUsersListView, ToggleInterestView,
+)
 
 app_name = InterestsConfig.name
 
@@ -16,7 +17,6 @@ urlpatterns = [
     path('<int:pk>/', InterestDetailView.as_view(), name='detail'),
     path('<int:pk>/users/', InterestUsersListView.as_view(), name='users'),
     path('', InterestListView.as_view(), name='list'),
-    path('find-user/', never_cache(FindSimilarUser.as_view()), name='find-user'),
     path('user-found/', never_cache(FoundSimilarUserView.as_view()), name='user-found'),
     path('deny-user/', never_cache(DenySimilarUserView.as_view()), name='deny-user'),
     path('approve-user/', never_cache(ApproveSimilarUserView.as_view()), name='approve-user'),

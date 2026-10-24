@@ -1,8 +1,8 @@
-{% extends 'interests/interest_base.html' %}
+{% extends 'Interests/interest_base.html' %}
 {% load my_tags %}
 {% block int_content %}
     <div class="headline">новый топик</div>
-    <form method="post" enctype="multipart/form-data">
+    <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <div class="buttons">

@@ -1,55 +1,52 @@
-import random
 import os
+import random
 
-from django.core.management import BaseCommand
-from django.db.models import Max
-from django.db.models.signals import post_save
 from django.conf import settings
+from django.core.management import BaseCommand, CommandError
+from django.db.models import Max
 
-from users.models import User
-from users.signals import send_confirmation_email
 from Interests.models import Interest
+from users.models import User
+
+DEV_PASSWORD = 'qwerty'
 
 
 class Command(BaseCommand):
-    help = 'Создает случайных пользователей со случайными интересами.'
+    help = 'Создает случайных пользователей со случайными интересами (только при DEBUG=1, пароль: qwerty).'
 
     def add_arguments(self, parser):
         parser.add_argument(
             '--count',
             type=int,
-            default=1,
-            help='Количество сгенерированных пользователей'
+            default=5,
+            help='Количество сгенерированных пользователей (по умолчанию 5)',
         )
 
     def handle(self, *args, **options):
-        count = options['count']
-        post_save.disconnect(send_confirmation_email, sender=User)
+        if not settings.DEBUG:
+            raise CommandError('Команда создает пользователей с известным паролем и доступна только при DEBUG=1.')
+
         avatars_dir = os.path.join(settings.MEDIA_ROOT, 'sample')
-        avatars = [f for f in os.listdir(avatars_dir) if os.path.isfile(os.path.join(avatars_dir, f))]
-        for i in range(count):
-            next_pk = User.objects.all().aggregate(Max('id'))['id__max'] + 1
-            if next_pk is None:
-                next_pk = 1
-            random_avatar = random.choice(avatars)
-            avatar_path = os.path.join('sample', random_avatar)
-            user = User.objects.create(
-                email=f'user{next_pk}@gmail.com',
-                name=f'User{next_pk}',
-                slug=f'user{next_pk}',
+        avatars = []
+        if os.path.isdir(avatars_dir):
+            avatars = [f for f in os.listdir(avatars_dir) if os.path.isfile(os.path.join(avatars_dir, f))]
+
+        interests = list(Interest.objects.all())
+        last_id = User.objects.aggregate(Max('id'))['id__max'] or 0
+
+        for i in range(options['count']):
+            number = last_id + i + 1
+            user = User(
+                email=f'user{number}@example.com',
+                name=f'User{number}',
+                slug=f'user{number}',
                 is_active=True,
                 is_email_verified=True,
-                avatar=avatar_path,
+                avatar=os.path.join('sample', random.choice(avatars)) if avatars else None,
             )
-
-            interests = Interest.objects.all()
-            if interests.exists():
-                num_interests = random.randint(1, len(interests))
-                selected_interests = random.sample(list(interests), k=num_interests)
-                for interest in selected_interests:
-                    interest.members.add(user)
-
-            user.set_password('qwerty')
+            user.set_password(DEV_PASSWORD)
             user.save()
-            print(f'User{next_pk} created')
-        post_save.connect(send_confirmation_email, sender=User)
+
+            if interests:
+                user.interests.add(*random.sample(interests, k=random.randint(1, len(interests))))
+            self.stdout.write(f'User{number} created')

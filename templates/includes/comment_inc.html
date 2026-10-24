@@ -1,10 +1,11 @@
-{% load my_tags %}
-<div class="comment" id="{{ object.pk }}">
+{% load my_tags humanize %}
+<div class="comment" id="comment-{{ object.pk }}">
     <div class="inner">
         <aside class="buttons">
-            {% if user == object.user or user.role == 'moderator' or user.role == 'admin' %}
+            {% if user.is_authenticated and user == object.user or user.role == 'moderator' or user.role == 'admin' %}
                 <div class="main-controls">
-                    <span class="item-delete" title="Удалить" data-type="comment" data-id="{{ object.pk }}"></span>
+                    <span class="item-delete" role="button" tabindex="0" aria-label="Удалить" title="Удалить"
+                          data-type="comment" data-id="{{ object.pk }}" data-url="{% url 'topics:delete' %}"></span>
                 </div>
             {% endif %}
         </aside>
@@ -14,10 +15,10 @@
             </a>
             <div class="name-date">
                 <a class="name" href="{% url 'users:profile' object.user.slug %}">{{ object.user.name }}</a>
-                <span class="time"><time datetime="{{ object.created_at }}"
-                                         title="{{ object.created_at }}">{{ object.created_at|time_since }}</time></span>
+                <span class="time"><time datetime="{{ object.created_at|date:'c' }}"
+                                         title="{{ object.created_at }}">{{ object.created_at|naturaltime }}</time></span>
             </div>
         </header>
-        <div class="body">{{ object.text }}</div>
+        <div class="body">{{ object.text|linebreaksbr }}</div>
     </div>
 </div>

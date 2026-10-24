@@ -1,11 +1,12 @@
-{% extends 'interests/interest_base.html' %}
+{% extends 'Interests/interest_base.html' %}
 {% load my_tags %}
+{% block back_url %}{% url 'interests:list' %}{% endblock %}
 {% block int_content %}
     <div class="block">
         {{ object.description|default:"Нет описания" }}
     </div>
-    {% if object.topics.count != 0 %}
-        <div class="headline"><a href="{% url 'topics:list' object.pk %}">топики <div class="count">{{ object.topics.count }}</div></a></div>
+    {% if topics_count != 0 %}
+        <div class="headline"><a href="{% url 'topics:list' object.pk %}">топики <div class="count">{{ topics_count }}</div></a></div>
         <div class="block">
             <div class="topics short">
                 {% for topic in topics %}
@@ -14,10 +15,10 @@
             </div>
         </div>
     {% endif %}
-    <div class="headline"><a href="{% url 'interests:comments' object.pk %}">комментарии <div class="count">{% if object.comments.count != 0 %}{{ object.comments.count }}{% endif %} </div></a></div>
+    <div class="headline"><a href="{% url 'interests:comments' object.pk %}">комментарии <div class="count">{% if comments_count != 0 %}{{ comments_count }}{% endif %} </div></a></div>
     <div class="block">
         <div class="comments short">
-            {% if object.comments.count == 0 %}
+            {% if comments_count == 0 %}
                 <p class="nothing-here">Нет комментариев</p>
             {% endif %}
             {% for comment in comments reversed %}

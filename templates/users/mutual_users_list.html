@@ -7,8 +7,10 @@
             <p class="clearfix">Список всех пользователей с которыми у вас взаимные одобрение</p>
         </header>
         <div class="users">
-            {% for user in object_list %}
-                {% include 'includes/user_info_inc.html' with object=user %}
+            {% for member in object_list %}
+                {% include 'includes/user_info_inc.html' with object=member %}
+            {% empty %}
+                <p class="nothing-here">Пока нет взаимных одобрений</p>
             {% endfor %}
         </div>
     </div>

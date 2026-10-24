@@ -14,7 +14,9 @@ class UserForm(StyleFormMixin, forms.ModelForm):
 class UserAdminForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = User
-        fields = '__all__'
+        # без password: поле с хэшем нельзя править как обычный текст
+        fields = ('avatar', 'email', 'name', 'slug', 'contacts', 'description',
+                  'role', 'is_active', 'is_email_verified',)
 
 
 class UserRegisterForm(StyleFormMixin, UserCreationForm):
@@ -24,7 +26,13 @@ class UserRegisterForm(StyleFormMixin, UserCreationForm):
 
 
 class UserLoginForm(StyleFormMixin, AuthenticationForm):
-    pass
+    def confirm_login_allowed(self, user):
+        super().confirm_login_allowed(user)
+        if not user.is_email_verified:
+            raise forms.ValidationError(
+                'Подтвердите почту по ссылке из письма, чтобы войти.',
+                code='email_not_verified',
+            )
 
 
 class UserUpdateForm(StyleFormMixin, forms.ModelForm):

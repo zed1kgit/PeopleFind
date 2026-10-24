@@ -1,45 +1,49 @@
-{% load my_tags %}
-<article class="topic" id="{{ object.pk }}">
+{% load my_tags humanize %}
+{% url 'topics:detail' pk=object.interest_id slug=object.slug as topic_url %}
+<article class="topic" id="topic-{{ object.pk }}">
     <div class="inner">
         {% if full %}
             <header>
-                <a href="{% url 'users:profile' object.author.slug %}" class="poster"><img
-                        src="{{ object.author.avatar|user_media }}" alt="{{ object.author.name }}"></a>
-                <div class="name-date"><a class="name"
-                                          href='{% url 'users:profile' object.author.slug %}'
-                                          title="{{ object.author.name }}">{{ object.author.name }}</a></div>
+                {% if object.author %}
+                    <a href="{% url 'users:profile' object.author.slug %}" class="poster"><img
+                            src="{{ object.author.avatar|user_media }}" alt="{{ object.author.name }}"></a>
+                    <div class="name-date"><a class="name"
+                                              href="{% url 'users:profile' object.author.slug %}"
+                                              title="{{ object.author.name }}">{{ object.author.name }}</a></div>
+                {% else %}
+                    <div class="name-date"><span class="name">Удаленный пользователь</span></div>
+                {% endif %}
             </header>
         {% else %}
             <aside class="buttons">
-            {% if user == object.author or user.role == 'moderator' or user.role == 'admin' %}
+            {% if user.is_authenticated and user == object.author or user.role == 'moderator' or user.role == 'admin' %}
                 <div class="main-controls">
-                    <span class="item-delete" title="Удалить" data-type="topic" data-id="{{ object.pk }}"></span>
+                    <span class="item-delete" role="button" tabindex="0" aria-label="Удалить" title="Удалить"
+                          data-type="topic" data-id="{{ object.pk }}" data-url="{% url 'topics:delete' %}"></span>
                 </div>
             {% endif %}
             </aside>
             <header>
-                <a href="{% url 'topics:detail' pk=object.interest.pk slug=object.slug %}" class="poster"><img
+                <a href="{{ topic_url }}" class="poster"><img
                         src="{{ object.author.avatar|user_media }}" alt="{{ object.title }}"></a>
-                <div class="name-date"><a class="name"
-                                          href='{% url 'topics:detail' pk=object.interest.pk slug=object.slug %}'
+                <div class="name-date"><a class="name" href="{{ topic_url }}"
                                           title="{{ object.title }}">{{ object.title }}</a></div>
             </header>
         {% endif %}
         <div class="status-line">
-            <div class="section main"><span class="comments-count">{{ object.comments.count }}</span></div>
+            <div class="section main"><span class="comments-count">{{ object.comments_count }}</span></div>
             <div class="section created_at">
-                <time datetime="{{ object.created_at }}">{{ object.created_at|time_since }}</time>
+                <time datetime="{{ object.created_at|date:'c' }}" title="{{ object.created_at }}">{{ object.created_at|naturaltime }}</time>
             </div>
         </div>
         <div class="body topic-text">
-            {% if full != true %}
-                <div class="body-inner">{{ object.description }}</div>
+            {% if full %}
+                <div class="body-inner">{{ object.description|linebreaksbr }}</div>
             {% else %}
                 <div class="body-inner">{{ object.description|truncatechars:200 }}</div>
                 {% if object.description|length > 200 %}
                     <div class="read_more-link">
-                        <a href="{% url 'topics:detail' pk=object.interest.pk slug=object.slug %}" class="link">Читать
-                            дальше →</a>
+                        <a href="{{ topic_url }}" class="link">Читать дальше →</a>
                     </div>
                 {% endif %}
             {% endif %}

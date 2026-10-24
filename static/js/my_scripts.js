@@ -1,196 +1,177 @@
-$(document).ready(function () {
-    $('.subscribe').on('click', function (event) {
-        event.preventDefault();
+/*
+ * Скрипты PeopleFind без jQuery: fetch + data-атрибуты.
+ * Адреса запросов берутся из data-url в разметке, чтобы не дублировать маршруты Django.
+ */
+(function () {
+    'use strict';
 
-        let $this = $(this);
-        let interestId = $this.data('interest-id');
-        let isSubscribed = $this.data('is-subscribed');
-        let url = $this.data('url');
+    const csrfToken = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
 
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: {
-                interest_id: interestId,
-                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-            },
-            success: function (response) {
-                if (response.success) {
-                    if (isSubscribed === true) {
-                        $this.text('Подписаться');
-                        $this.data('is-subscribed', false);
-                        $this.removeClass('btn-danger').addClass('btn-success')
-                    } else {
-                        $this.text('Отписаться');
-                        $this.data('is-subscribed', true);
-                        $this.removeClass('btn-success').addClass('btn-danger')
-                    }
-                } else {
-                    alert('Произошла ошибка.');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error('Ошибка:', xhr.statusText);
+    function showError(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast-error';
+        toast.setAttribute('role', 'alert');
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    }
+
+    async function post(url, data) {
+        const body = new URLSearchParams();
+        Object.entries(data || {}).forEach(([key, value]) => {
+            if (value !== null && value !== undefined) {
+                body.append(key, value);
+            }
+        });
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {'X-CSRFToken': csrfToken, 'X-Requested-With': 'XMLHttpRequest'},
+            body: body,
+            credentials: 'same-origin',
+        });
+        let payload = {};
+        try {
+            payload = await response.json();
+        } catch (error) {
+            // ответ без JSON: ниже сработает проверка response.ok
+        }
+        if (!response.ok || payload.success === false) {
+            throw new Error(payload.error || 'Произошла ошибка. Попробуйте еще раз.');
+        }
+        return payload;
+    }
+
+    // Элементы-"кнопки" (span, a без href) должны работать и с клавиатуры
+    document.querySelectorAll('[role="button"]:not(button)').forEach((element) => {
+        element.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                element.click();
             }
         });
     });
 
-    let area = $('.area');
+    // --- Подписка на интерес ------------------------------------------------
+    function setSubscribed(button, subscribed) {
+        button.textContent = subscribed ? 'Отписаться' : 'Подписаться';
+        button.classList.toggle('btn-danger', subscribed);
+        button.classList.toggle('btn-success', !subscribed);
+        button.dataset.isSubscribed = String(subscribed);
+    }
 
-    area.on('click', function (event) {
-        event.preventDefault();
-
-        let $this = $(this);
-        let url = $this.data('url');
-        let userId = $this.data('user-id');
-
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: {
-                'user-id': userId,
-                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-            },
-            success: function (response) {
-                if (response.success) {
-                    if (response.new_object_id === 'none') {
-                        window.location.href = '/interests/user-found'
-                    } else {
-                        updateUserDetail(response.new_object, response.new_object_id);
-                    }
-                } else {
-                    alert(response.message);
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error('Ошибка:', status, error);
+    document.querySelectorAll('.subscribe').forEach((button) => {
+        button.addEventListener('click', async (event) => {
+            event.preventDefault();
+            button.disabled = true;
+            try {
+                const data = await post(button.dataset.url);
+                setSubscribed(button, data.subscribed);
+                document.querySelectorAll('[data-members-for="' + button.dataset.interestId + '"]')
+                    .forEach((element) => { element.textContent = data.members_count; });
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                button.disabled = false;
             }
         });
     });
 
-    function updateUserDetail(newObjectHtml, objectId) {
-        $('#user-detail').html(newObjectHtml);
-        area.each(function (_, el) {
-            $(el).data('user-id', objectId);
-            $(el).attr('data-user-id', objectId);
+    // --- Поиск людей: одобрить / отклонить ----------------------------------
+    const areas = document.querySelectorAll('.area');
+    let ratingInProgress = false;
+
+    areas.forEach((area) => {
+        area.addEventListener('click', async (event) => {
+            event.preventDefault();
+            if (ratingInProgress) {
+                return;
+            }
+            ratingInProgress = true;
+            try {
+                const data = await post(area.dataset.url, {'user-id': area.dataset.userId});
+                if (data.new_object_id === 'none') {
+                    window.location.href = document.querySelector('.choose').dataset.foundUrl;
+                    return;
+                }
+                document.getElementById('user-detail').innerHTML = data.new_object;
+                areas.forEach((element) => { element.dataset.userId = data.new_object_id; });
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                ratingInProgress = false;
+            }
+        });
+    });
+
+    // --- Уведомления ---------------------------------------------------------
+    document.querySelectorAll('.new-marker').forEach((marker) => {
+        marker.addEventListener('click', async () => {
+            if (marker.classList.contains('off')) {
+                return;
+            }
+            try {
+                await post(marker.dataset.url);
+                marker.classList.add('off');
+                const badge = document.querySelector('.menu-icon.notifications');
+                if (badge) {
+                    badge.dataset.count = Math.max(0, parseInt(badge.dataset.count || '0', 10) - 1);
+                }
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+    });
+
+    // --- Комментарии ---------------------------------------------------------
+    const commentForm = document.getElementById('comment_form');
+    if (commentForm) {
+        const textarea = commentForm.querySelector('textarea');
+
+        commentForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const text = textarea.value.trim();
+            if (!text) {
+                return;
+            }
+            const isInterest = commentForm.dataset.type === 'interest';
+            try {
+                await post(commentForm.dataset.url, {
+                    text: text,
+                    interest: isInterest ? commentForm.dataset.id : null,
+                    topic: isInterest ? null : commentForm.dataset.id,
+                });
+                window.location.reload();
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+
+        textarea.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                commentForm.requestSubmit();
+            }
         });
     }
 
-    $('.new-marker').on('click', function () {
-        let $this = $(this)
-        let notificationId = $this.data('id');
-        $.ajax({
-            url: "/mark_as_read/0/".replace('0', notificationId),
-            type: 'POST',
-            data: {
-                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-            },
-            success: function (response) {
-                if (response.success) {
-                    $this.addClass('off');
-                } else {
-                    alert('Произошла ошибка при отметке уведомления как прочитанного.');
-                }
-            },
-            error: function (xhr, textStatus, errorThrown) {
-                console.error(textStatus + ': ' + errorThrown);
-            }
-        });
-    });
-
-    $('#comment_form').on('submit', function (event) {
-        event.preventDefault();
-
-        let $this = $(this);
-        let formData = new FormData(this);
-        let comType = $this.data('type');
-        let interestId = null;
-        let topicId = null;
-        let text = formData.get('comment')
-
-        if (comType === 'interest') {
-            interestId = $this.data('id');
-        } else if (comType === 'topic') {
-            topicId = $this.data('id');
-        }
-
-        $.ajax({
-            type: 'POST',
-            url: "/interests/topics/new_comment/",
-            data: {
-                text: text,
-                interest: interestId,
-                topic: topicId,
-                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-            },
-            success: function (response) {
-                if (response.success) {
-                    location.reload()
-                    console.log("Комментарий отправлен")
-                } else {
-                    alert("Произошла ошибка при отправке")
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error('Ошибка:', xhr.statusText);
-            }
-        });
-    });
-
-    $('.item-delete').on('click', function (event) {
-        event.preventDefault();
-        if (confirm('Вы уверены, что хотите это удалить?')) {
-            let $this = $(this);
-            let type = $this.data('type');
-            let commentId = null;
-            let topicId = null;
-
-            if (type === 'comment') {
-                commentId = $this.data('id');
-            } else if (type === 'topic') {
-                topicId = $this.data('id');
-            }
-
-            $.ajax({
-                type: 'POST',
-                url: "/interests/delete/",
-                data: {
-                    comment: commentId,
-                    topic: topicId,
-                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-                },
-                success: function (response) {
-                    if (response.success) {
-                        if (type === 'comment') {
-                            let element = $('.comment#0'.replace('0', commentId));
-                            element.remove()
-                        } else if (type === 'topic') {
-                            let element = $('.topic#0'.replace('0', topicId));
-                            element.remove()
-                        }
-                    } else {
-                        alert("Произошла ошибка")
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Ошибка:', xhr.statusText);
-                }
-            });
-        }
-    });
-
-    $('#id_comment').on('keydown', function (event) {
-        if (event.key === 'Enter' && !event.shiftKey) {
+    // --- Удаление комментариев и топиков ------------------------------------
+    document.querySelectorAll('.item-delete').forEach((button) => {
+        button.addEventListener('click', async (event) => {
             event.preventDefault();
-            $('#comment_form').submit();
-        }
+            if (!confirm('Вы уверены, что хотите это удалить?')) {
+                return;
+            }
+            const type = button.dataset.type;   // 'comment' или 'topic'
+            const id = button.dataset.id;
+            try {
+                await post(button.dataset.url, {[type]: id});
+                const element = document.getElementById(type + '-' + id);
+                if (element) {
+                    element.remove();
+                }
+            } catch (error) {
+                showError(error.message);
+            }
+        });
     });
-
-    let currentUrl = window.location.pathname;
-    let parts = currentUrl.split("/");
-    parts.pop();
-    parts.pop();
-    let newUrl = parts.join("/") + "/";
-    $('#back').attr('href', newUrl);
-});
-
+})();
