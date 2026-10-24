@@ -27,7 +27,7 @@ class Command(BaseCommand):
             'worker',
             f'--loglevel={loglevel}',
             f'--pool={pool}',
-            f'-E'
+            '-E'
         ]
 
         self.stdout.write(f'Starting Celery worker with pool "{pool}" and loglevel "{loglevel}".')
