@@ -1,23 +1,45 @@
 {% extends 'base.html' %}
 {% load my_tags %}
 {% block content %}
-    <div class="block">
-        <div class="headline"><a href="{% url 'interests:list' %}">популярные интересы</a></div>
-        <div class="interests">
+    <section class="hero">
+        <div>
+            <h1>Находите людей по интересам</h1>
+            <p>Подписывайтесь на интересы, знакомьтесь с теми, кому близко то же самое, и общайтесь, когда симпатия взаимна.</p>
+        </div>
+        <div class="hero-actions">
+            {% if user.is_authenticated %}
+                <a class="btn btn-primary btn-lg" href="{% url 'interests:user-found' %}">Найти людей</a>
+            {% else %}
+                <a class="btn btn-primary btn-lg" href="{% url 'users:register' %}">Создать аккаунт</a>
+                <a class="btn btn-outline-secondary btn-lg" href="{% url 'users:login' %}">Войти</a>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-head">
+            <h2 class="section-title">Популярные интересы</h2>
+            <a class="link-more" href="{% url 'interests:list' %}">Все интересы</a>
+        </div>
+        <div class="interest-grid">
             {% for interest in interest_objects_list %}
                 {% include 'includes/interest_info_inc.html' with object=interest %}
+            {% empty %}
+                <p class="nothing-here">Интересов пока нет</p>
             {% endfor %}
         </div>
-    </div>
-    <div class="block">
-        <div class="headline">самые обсуждаемые топики</div>
-        <div class="topics">
+    </section>
+
+    <section class="section">
+        <div class="section-head">
+            <h2 class="section-title">Обсуждаемые топики</h2>
+        </div>
+        <div class="stack">
             {% for topic in topic_objects_list %}
                 {% include 'includes/topic_inc.html' with object=topic %}
+            {% empty %}
+                <p class="nothing-here">Топиков пока нет</p>
             {% endfor %}
         </div>
-    </div>
-    <div>
-        <a class="btn btn-primary search" href="{% url 'interests:user-found' %}">ПОИСК ЛЮДЕЙ ПО ИНТЕРЕСАМ</a>
-    </div>
+    </section>
 {% endblock %}

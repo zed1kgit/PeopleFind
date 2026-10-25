@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="card-header">Авторизация</div>
-    <div class="card-body">
+    <section class="auth-card">
+        <h1>Вход</h1>
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <div>
-                <button type="submit" class="btn btn-success">Вход</button>
-                <a class="btn my-btn" href="{% url 'users:register' %}">Зарегистрировать новый аккаунт</a>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Войти</button>
+                <a class="btn btn-outline-secondary" href="{% url 'users:register' %}">Создать аккаунт</a>
             </div>
         </form>
-    </div>
+    </section>
 {% endblock %}

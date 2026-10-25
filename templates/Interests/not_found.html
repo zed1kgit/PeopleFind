@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 {% load my_tags %}
 {% block content %}
-    <div>
-    <h1 class="head">Не найдено похожих пользователей.</h1>
-    </div>
+    <section class="empty-state">
+        <h1>Не найдено похожих пользователей.</h1>
+        <p class="muted">Подпишитесь на несколько интересов или загляните позже: новые люди появляются каждый день.</p>
+        <a class="btn btn-primary" href="{% url 'interests:list' %}">Выбрать интересы</a>
+    </section>
 {% endblock %}

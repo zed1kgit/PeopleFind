@@ -1,52 +1,42 @@
 {% load my_tags humanize %}
 {% url 'topics:detail' pk=object.interest_id slug=object.slug as topic_url %}
-<article class="topic" id="topic-{{ object.pk }}">
-    <div class="inner">
+<article class="topic-card{% if full %} full{% endif %}" id="topic-{{ object.pk }}">
+    {% if object.author %}
+        <a class="topic-avatar" href="{% url 'users:profile' object.author.slug %}" title="{{ object.author.name }}">
+            <img class="avatar avatar-md" src="{{ object.author.avatar|user_media }}" alt="{{ object.author.name }}" width="44" height="44">
+        </a>
+    {% else %}
+        <span class="topic-avatar"><img class="avatar avatar-md" src="{{ object.author.avatar|user_media }}" alt="" width="44" height="44"></span>
+    {% endif %}
+    <div class="topic-main">
         {% if full %}
-            <header>
-                {% if object.author %}
-                    <a href="{% url 'users:profile' object.author.slug %}" class="poster"><img
-                            src="{{ object.author.avatar|user_media }}" alt="{{ object.author.name }}"></a>
-                    <div class="name-date"><a class="name"
-                                              href="{% url 'users:profile' object.author.slug %}"
-                                              title="{{ object.author.name }}">{{ object.author.name }}</a></div>
-                {% else %}
-                    <div class="name-date"><span class="name">Удаленный пользователь</span></div>
-                {% endif %}
-            </header>
+            <h2 class="topic-title">{{ object.title }}</h2>
         {% else %}
-            <aside class="buttons">
-            {% if user.is_authenticated and user == object.author or user.role == 'moderator' or user.role == 'admin' %}
-                <div class="main-controls">
-                    <span class="item-delete" role="button" tabindex="0" aria-label="Удалить" title="Удалить"
-                          data-type="topic" data-id="{{ object.pk }}" data-url="{% url 'topics:delete' %}"></span>
-                </div>
-            {% endif %}
-            </aside>
-            <header>
-                <a href="{{ topic_url }}" class="poster"><img
-                        src="{{ object.author.avatar|user_media }}" alt="{{ object.title }}"></a>
-                <div class="name-date"><a class="name" href="{{ topic_url }}"
-                                          title="{{ object.title }}">{{ object.title }}</a></div>
-            </header>
+            <h3 class="topic-title"><a href="{{ topic_url }}">{{ object.title }}</a></h3>
         {% endif %}
-        <div class="status-line">
-            <div class="section main"><span class="comments-count">{{ object.comments_count }}</span></div>
-            <div class="section created_at">
-                <time datetime="{{ object.created_at|date:'c' }}" title="{{ object.created_at }}">{{ object.created_at|naturaltime }}</time>
-            </div>
-        </div>
-        <div class="body topic-text">
+        <div class="meta">
             {% if full %}
-                <div class="body-inner">{{ object.description|linebreaksbr }}</div>
-            {% else %}
-                <div class="body-inner">{{ object.description|truncatechars:200 }}</div>
-                {% if object.description|length > 200 %}
-                    <div class="read_more-link">
-                        <a href="{{ topic_url }}" class="link">Читать дальше →</a>
-                    </div>
+                {% if object.author %}
+                    <a class="meta-item author" href="{% url 'users:profile' object.author.slug %}">{{ object.author.name }}</a>
+                {% else %}
+                    <span class="meta-item author">Удаленный пользователь</span>
                 {% endif %}
             {% endif %}
+            <span class="meta-item" title="Комментарии"><svg class="icon" aria-hidden="true"><use href="#i-comment"/></svg>{{ object.comments_count }}</span>
+            <span class="meta-item"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg><time datetime="{{ object.created_at|date:'c' }}" title="{{ object.created_at }}">{{ object.created_at|naturaltime }}</time></span>
         </div>
+        {% if full %}
+            <div class="topic-text">{{ object.description|linebreaksbr }}</div>
+        {% else %}
+            <p class="topic-excerpt">{{ object.description|truncatechars:200 }}</p>
+        {% endif %}
     </div>
+    {% if not full and user.is_authenticated %}
+        {% if user == object.author or user.role == 'moderator' or user.role == 'admin' %}
+            <button type="button" class="icon-btn danger item-delete" title="Удалить" aria-label="Удалить топик"
+                    data-type="topic" data-id="{{ object.pk }}" data-url="{% url 'topics:delete' %}">
+                <svg class="icon" aria-hidden="true"><use href="#i-trash"/></svg>
+            </button>
+        {% endif %}
+    {% endif %}
 </article>

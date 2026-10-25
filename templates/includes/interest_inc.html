@@ -1,4 +1,2 @@
 {% load my_tags %}
-<a class="interest" href="{% url 'interests:detail' object.pk %}"><img alt="{{ object.name }}"
-                                                                       src="{{ object.logo|interest_media }}">{{ object.name }}
-</a>
+<a class="chip" href="{% url 'interests:detail' object.pk %}"><img src="{{ object.logo|interest_media }}" alt="" width="24" height="24">{{ object.name }}</a>

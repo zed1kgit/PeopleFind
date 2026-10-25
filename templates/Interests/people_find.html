@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
 {% load my_tags %}
 {% block content %}
-    <div class="choose" data-found-url="{% url 'interests:user-found' %}">
-        <a class="area deny" role="button" tabindex="0" aria-label="Отклонить"
+    <div class="find choose" data-found-url="{% url 'interests:user-found' %}">
+        <div id="user-detail" class="find-card">
+            {% include 'includes/user_detail.html' with object=found_user compact=True %}
+        </div>
+        <a class="area deny" role="button" tabindex="0" aria-label="Пропустить"
            data-url="{% url 'interests:deny-user' %}"
            data-user-id="{{ found_user.pk }}">
-            <div class="deny-mark"></div>
+            <svg class="icon" aria-hidden="true"><use href="#i-x"/></svg><span>Пропустить</span>
         </a>
-        <div id="user-detail">
-            {% include 'includes/user_detail.html' with object=found_user %}
-        </div>
         <a class="area approve" role="button" tabindex="0" aria-label="Одобрить"
            data-url="{% url 'interests:approve-user' %}"
            data-user-id="{{ found_user.pk }}">
-            <div class="approve-mark"></div>
+            <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span>Одобрить</span>
         </a>
     </div>
 {% endblock %}

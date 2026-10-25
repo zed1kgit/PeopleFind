@@ -1,18 +1,17 @@
 {% extends 'Interests/interest_base.html' %}
 {% load my_tags %}
 {% block int_content %}
-    <div class="headline">комментарии
-        <div class="count">{% if comments_count %}{{ comments_count }}{% endif %} </div>
+    <div class="section-head">
+        <h2 class="section-title">Комментарии
+            {% if comments_count %}<span class="count">{{ comments_count }}</span>{% endif %}</h2>
     </div>
-    <div class="block">
-        <div class="comments">
-            {% for comment in object_list %}
-                {% include 'includes/comment_inc.html' with object=comment %}
-            {% empty %}
-                <p class="nothing-here">Нет комментариев</p>
-            {% endfor %}
-            {% include 'includes/pagination_inc.html' %}
-        </div>
-        {% include 'includes/write_comment_inc.html' with type='interest' id=object.pk %}
+    <div class="stack">
+        {% for comment in object_list %}
+            {% include 'includes/comment_inc.html' with object=comment %}
+        {% empty %}
+            <p class="nothing-here">Нет комментариев</p>
+        {% endfor %}
     </div>
+    {% include 'includes/pagination_inc.html' %}
+    {% include 'includes/write_comment_inc.html' with type='interest' id=object.pk %}
 {% endblock %}

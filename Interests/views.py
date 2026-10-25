@@ -121,7 +121,7 @@ class RateSimilarUserView(LoginRequiredMixin, View):
         found_user = find_people(current_user)
         if not found_user:
             return JsonResponse({'success': True, 'new_object_id': 'none'})
-        new_object = render(request, 'includes/user_detail.html', {'object': found_user}).content.decode()
+        new_object = render(request, 'includes/user_detail.html', {'object': found_user, 'compact': True}).content.decode()
         return JsonResponse({'success': True, 'new_object': new_object, 'new_object_id': found_user.pk})
 
 

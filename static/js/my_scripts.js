@@ -54,8 +54,8 @@
     // --- Подписка на интерес ------------------------------------------------
     function setSubscribed(button, subscribed) {
         button.textContent = subscribed ? 'Отписаться' : 'Подписаться';
-        button.classList.toggle('btn-danger', subscribed);
-        button.classList.toggle('btn-success', !subscribed);
+        button.classList.toggle('btn-outline-secondary', subscribed);
+        button.classList.toggle('btn-primary', !subscribed);
         button.dataset.isSubscribed = String(subscribed);
     }
 

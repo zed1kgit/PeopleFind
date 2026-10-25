@@ -2,29 +2,36 @@
 {% load my_tags %}
 {% block back_url %}{% url 'interests:list' %}{% endblock %}
 {% block int_content %}
-    <div class="block">
-        {{ object.description|default:"Нет описания" }}
-    </div>
+    <section class="card-block about">
+        {{ object.description|default:"Нет описания"|linebreaksbr }}
+    </section>
+
     {% if topics_count != 0 %}
-        <div class="headline"><a href="{% url 'topics:list' object.pk %}">топики <div class="count">{{ topics_count }}</div></a></div>
-        <div class="block">
-            <div class="topics short">
-                {% for topic in topics %}
-                {% include 'includes/topic_inc.html' with object=topic %}
-            {% endfor %}
+        <section class="section">
+            <div class="section-head">
+                <h2 class="section-title"><a href="{% url 'topics:list' object.pk %}">Топики</a>
+                    <span class="count">{{ topics_count }}</span></h2>
             </div>
-        </div>
+            <div class="stack">
+                {% for topic in topics %}
+                    {% include 'includes/topic_inc.html' with object=topic %}
+                {% endfor %}
+            </div>
+        </section>
     {% endif %}
-    <div class="headline"><a href="{% url 'interests:comments' object.pk %}">комментарии <div class="count">{% if comments_count != 0 %}{{ comments_count }}{% endif %} </div></a></div>
-    <div class="block">
-        <div class="comments short">
-            {% if comments_count == 0 %}
-                <p class="nothing-here">Нет комментариев</p>
-            {% endif %}
+
+    <section class="section">
+        <div class="section-head">
+            <h2 class="section-title"><a href="{% url 'interests:comments' object.pk %}">Комментарии</a>
+                {% if comments_count %}<span class="count">{{ comments_count }}</span>{% endif %}</h2>
+        </div>
+        <div class="stack">
             {% for comment in comments reversed %}
-        	{% include 'includes/comment_inc.html' with object=comment %}
-        {% endfor %}
+                {% include 'includes/comment_inc.html' with object=comment %}
+            {% empty %}
+                <p class="nothing-here">Нет комментариев</p>
+            {% endfor %}
         </div>
         {% include 'includes/write_comment_inc.html' with type='interest' id=object.pk %}
-    </div>
+    </section>
 {% endblock %}

@@ -1,27 +1,19 @@
 {% load my_tags %}
-<div class="detailed">
-    <a class="interest-name-logo" href="{% url 'interests:detail' object.pk %}" title="{{ object.name }}">
-        <img alt="{{ object.name }}" class="interest-logo" src="{{ object.logo|interest_media }}" height="64px"
-             width="64px">
-        <div class="interest-name">{{ object.name }}</div>
-    </a>
-    <div class="info">
-        <span class="grouped">
-            <span class="number" data-members-for="{{ object.pk }}">{{ object.members_count }}</span>
-            <span class="value">подписано</span>
+<div class="interest-card">
+    <a class="interest-link" href="{% url 'interests:detail' object.pk %}" title="{{ object.name }}">
+        <img class="interest-logo" src="{{ object.logo|interest_media }}" alt="" width="48" height="48">
+        <span class="interest-text">
+            <span class="interest-name">{{ object.name }}</span>
+            <span class="meta-item">
+                <svg class="icon" aria-hidden="true"><use href="#i-users"/></svg>
+                <span data-members-for="{{ object.pk }}">{{ object.members_count }}</span>
+            </span>
         </span>
-    </div>
-    <div class="info">
-        {% if user.is_authenticated %}
-            <button class="subscribe btn {% if object.is_member %}btn-danger{% else %}btn-success{% endif %}"
-               data-url="{% url 'interests:toggle-interest' object.id %}"
-               data-interest-id="{{ object.id }}"
-               data-is-subscribed="{% if object.is_member %}true{% else %}false{% endif %}">
-                {% if object.is_member %}
-                    Отписаться
-                {% else %}
-                    Подписаться
-                {% endif %} </button>
-        {% endif %}
-    </div>
+    </a>
+    {% if user.is_authenticated %}
+        <button type="button" class="subscribe btn btn-sm {% if object.is_member %}btn-outline-secondary{% else %}btn-primary{% endif %}"
+                data-url="{% url 'interests:toggle-interest' object.id %}"
+                data-interest-id="{{ object.id }}"
+                data-is-subscribed="{% if object.is_member %}true{% else %}false{% endif %}">{% if object.is_member %}Отписаться{% else %}Подписаться{% endif %}</button>
+    {% endif %}
 </div>

@@ -1,13 +1,15 @@
 {% extends 'Interests/interest_base.html' %}
 {% load my_tags %}
 {% block int_content %}
-    <div class="headline">новый топик</div>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <div class="buttons">
-            <a href="{% url 'interests:list' %}" class="btn btn-danger">Отмена</a>
-            <button type="submit" class="btn btn-success">Создать</button>
-        </div>
-    </form>
+    <section class="card-block">
+        <h2 class="section-title">Новый топик</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Создать</button>
+                <a href="{% url 'interests:detail' object.pk %}" class="btn btn-outline-secondary">Отмена</a>
+            </div>
+        </form>
+    </section>
 {% endblock %}

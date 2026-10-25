@@ -1,11 +1,14 @@
 {% if user.is_authenticated %}
-    <form method="post" accept-charset="UTF-8" id="comment_form" class="new-comment"
+    <form method="post" accept-charset="UTF-8" id="comment_form" class="comment-form"
           data-type="{{ type }}" data-id="{{ id }}" data-url="{% url 'topics:new-comment' %}">
-        <p>
-            <label for="id_comment" class="headline">Ваш комментарий</label>
-            <textarea name="comment" id="id_comment" cols="30" rows="3" maxlength="2000"
-                      placeholder="Ваш комментарий..." required class="form-control"></textarea>
-        </p>
-        <button class="btn btn-success" type="submit">Отправить</button>
+        <label for="id_comment" class="visually-hidden">Ваш комментарий</label>
+        <textarea name="comment" id="id_comment" rows="3" maxlength="2000"
+                  placeholder="Напишите комментарий..." required class="form-control"></textarea>
+        <div class="comment-form-actions">
+            <span class="muted">Enter: отправить, Shift+Enter: новая строка</span>
+            <button class="btn btn-primary btn-sm" type="submit">Отправить</button>
+        </div>
     </form>
+{% else %}
+    <p class="muted"><a href="{% url 'users:login' %}">Войдите</a>, чтобы оставить комментарий.</p>
 {% endif %}
