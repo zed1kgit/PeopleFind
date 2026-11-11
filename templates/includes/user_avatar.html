@@ -1,6 +1,4 @@
 {% load my_tags %}
-<div class="user avatar">
-    <a class="avatar" href="{% url 'users:profile' object.slug %}" title="{{ object.name }}">
-        <img alt="{{ object.name }}" src="{{ object.avatar|user_media }}">
-    </a>
-</div>
+<a class="member" href="{% url 'users:profile' object.slug %}" title="{{ object.name }}">
+    <img class="avatar avatar-md" src="{{ object.avatar|user_media }}" alt="{{ object.name }}" width="44" height="44">
+</a>

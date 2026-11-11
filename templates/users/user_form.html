@@ -1,31 +1,24 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    {% if change_password %}
-        <div class="card-header">Смена пароля</div>
-    {% else %}
-        {% if object %}
-            <div class="card-header">{{ object.name }}</div>
-        {% else %}
-            <div class="card-header">Регистрация</div>
-        {% endif %}
-    {% endif %}
-    <div class="card-body">
+    <section class="auth-card">
+        <h1>{% if change_password %}Смена пароля{% elif object %}{{ object.name }}{% else %}Регистрация{% endif %}</h1>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
-        {% if change_password %}
-            <button type="submit" class="btn btn-success">Подтвердить</button>
-        {% else %}
-            {% if object %}
-                <button type="submit" class="btn btn-success">Изменить</button>
-                {% if user.role == 'admin' %}
-                    <a href="{% url 'users:delete' object.slug %}" class="btn btn-danger">Удалить</a>
+            <div class="form-actions">
+                {% if change_password %}
+                    <button type="submit" class="btn btn-primary">Сменить пароль</button>
+                {% elif object %}
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                    {% if user.role == 'admin' %}
+                        <a href="{% url 'users:delete' object.slug %}" class="btn btn-outline-danger">Удалить</a>
+                    {% endif %}
+                {% else %}
+                    <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                    <a class="btn btn-outline-secondary" href="{% url 'users:login' %}">Уже есть аккаунт</a>
                 {% endif %}
-            {% else %}
-                <button type="submit" class="btn btn-success">Регистрация</button>
-            {% endif %}
-        {% endif %}
+            </div>
         </form>
-    </div>
+    </section>
 {% endblock %}

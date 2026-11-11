@@ -1,29 +1,31 @@
 {% load my_tags %}
-<div class="profile-head">
-    <div class="user-avatar">
-        <img class=""
-             src="{{ object.avatar|user_media }}" width="200" height="200"
-             alt="{{ object.name }}"
-             title="{{ object.name }}">
-        <div class="profile-actions">
-            {% if user.role == 'moderator' or user.role == 'admin' or user.pk == object.pk %}
-            	<a class="btn btn-success" href="{% url 'users:update' object.slug %}">Изменить профиль</a>
+<section class="profile-card{% if compact %} compact{% endif %}">
+    <img class="avatar avatar-xl" src="{{ object.avatar|user_media }}" width="140" height="140"
+         alt="{{ object.name }}" title="{{ object.name }}">
+    <h1 class="profile-name">{{ object.name }}</h1>
+    <p class="profile-about">{{ object.description|default:"Информация о себе отсутствует." }}</p>
+
+    {% if not compact and user.is_authenticated %}
+        {% if user.role == 'moderator' or user.role == 'admin' or user.pk == object.pk %}
+            <div class="profile-actions">
+                <a class="btn btn-primary btn-sm" href="{% url 'users:update' object.slug %}">Изменить профиль</a>
                 {% if user.pk == object.pk %}
-                	<a class="btn btn-warning" href="{% url 'users:change-password' object.slug %}">Изменить пароль</a>
-                {% endif %} 
-            {% endif %}
-        </div>
-    </div>
-    <h1 class="user-name">{{ object.name }}</h1>
-    <div class="card-body">
-        <span class="card-text">О себе: {{ object.description|default:"Информация отсутствует." }}</span><br>
-    </div>
-</div>
-<div class="block">
-    <div class="headline">интересы</div>
-    <div class="interests">
-        {% for interest in object.interests.all %}
-            {% include 'includes/interest_inc.html' with object=interest %}
-        {% endfor %}
-    </div>
-</div>
+                    <a class="btn btn-outline-secondary btn-sm" href="{% url 'users:change-password' object.slug %}">Изменить пароль</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endif %}
+
+    {% with interests=object.interests.all %}
+        {% if interests %}
+            <div class="profile-interests">
+                <h2 class="section-title small">Интересы</h2>
+                <div class="chips">
+                    {% for interest in interests %}
+                        {% include 'includes/interest_inc.html' with object=interest %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endwith %}
+</section>

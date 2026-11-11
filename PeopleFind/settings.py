@@ -40,6 +40,23 @@ if not SECRET_KEY:
 ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', 'localhost,127.0.0.1')
 CSRF_TRUSTED_ORIGINS = env_list('CSRF_TRUSTED_ORIGINS')
 
+if DEBUG:
+    # Удобные значения для разработки: локальный запуск и GitHub Codespaces
+    CSRF_TRUSTED_ORIGINS += [
+        f'{scheme}://{host}:8000'
+        for scheme in ('http', 'https')
+        for host in ('localhost', '127.0.0.1')
+    ]
+    _codespace = os.getenv('CODESPACE_NAME')
+    _forward_domain = os.getenv('GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN')
+    if _codespace and _forward_domain:
+        _codespace_host = f'{_codespace}-8000.{_forward_domain}'
+        ALLOWED_HOSTS.append(_codespace_host)
+        CSRF_TRUSTED_ORIGINS.append(f'https://{_codespace_host}')
+        # Запросы идут через прокси Codespaces: берем адрес и схему из его заголовков
+        USE_X_FORWARDED_HOST = True
+        SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # Базовый адрес сайта: используется в ссылках из писем (активация аккаунта и т.п.)
 SITE_URL = os.getenv('SITE_URL', 'http://localhost:8000').rstrip('/')
 

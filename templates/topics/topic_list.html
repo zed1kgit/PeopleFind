@@ -1,17 +1,16 @@
 {% extends 'Interests/interest_base.html' %}
 {% load my_tags %}
 {% block int_content %}
-    <div class="headline">топики
-        <div class="count">{% if topics_count %}{{ topics_count }}{% endif %} </div>
+    <div class="section-head">
+        <h2 class="section-title">Топики
+            {% if topics_count %}<span class="count">{{ topics_count }}</span>{% endif %}</h2>
     </div>
-    <div class="block">
-        <div class="comments">
-            {% for topic in object_list %}
-                {% include 'includes/topic_inc.html' with object=topic %}
-            {% empty %}
-                <p class="nothing-here">Нет топиков</p>
-            {% endfor %}
-            {% include 'includes/pagination_inc.html' %}
-        </div>
+    <div class="stack">
+        {% for topic in object_list %}
+            {% include 'includes/topic_inc.html' with object=topic %}
+        {% empty %}
+            <p class="nothing-here">Нет топиков</p>
+        {% endfor %}
     </div>
+    {% include 'includes/pagination_inc.html' %}
 {% endblock %}

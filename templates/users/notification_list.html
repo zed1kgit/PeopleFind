@@ -1,18 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
-    <div>
-        <header class="head">
-            <h1>Уведомления</h1>
-            <a href="{% url 'users:profile-redirect' %}">Профиль</a>
-        </header>
-        <div class="headline">Уведомления</div>
-        <div class="block">
-            {% for notification in object_list %}
-                {% include 'includes/notification_inc.html' with object=notification %}
-            {% empty %}
-                <p class="nothing-here">Уведомлений пока нет</p>
-            {% endfor %}
-            {% include 'includes/pagination_inc.html' %}
-        </div>
+    <header class="page-head">
+        <h1>Уведомления</h1>
+    </header>
+    <div class="stack">
+        {% for notification in object_list %}
+            {% include 'includes/notification_inc.html' with object=notification %}
+        {% empty %}
+            <p class="nothing-here">Уведомлений пока нет</p>
+        {% endfor %}
     </div>
+    {% include 'includes/pagination_inc.html' %}
 {% endblock %}

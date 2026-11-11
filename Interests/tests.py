@@ -71,6 +71,14 @@ class PeopleSearchViewsTests(TestCase):
         response = self.client.get(reverse('interests:user-found'))
         self.assertContains(response, 'Не найдено похожих пользователей')
 
+    def test_found_user_card_has_no_edit_buttons(self):
+        """В поиске карточка компактная: кнопки редактирования видны только в профиле."""
+        self.me.role = UserRoles.MODERATOR
+        self.me.save()
+        self.assertNotContains(self.client.get(reverse('interests:user-found')), 'Изменить профиль')
+        profile = self.client.get(reverse('users:profile', kwargs={'slug': self.friend.slug}))
+        self.assertContains(profile, 'Изменить профиль')
+
     def test_search_requires_login(self):
         self.client.logout()
         self.assertEqual(self.client.get(reverse('interests:user-found')).status_code, 302)

@@ -1,17 +1,16 @@
 {% extends 'Interests/interest_base.html' %}
 {% load my_tags %}
 {% block int_content %}
-    <div class="headline">пользователи
-        <div class="count">{% if object.members_count %}{{ object.members_count }}{% endif %} </div>
+    <div class="section-head">
+        <h2 class="section-title">Пользователи
+            {% if object.members_count %}<span class="count">{{ object.members_count }}</span>{% endif %}</h2>
     </div>
-    <div class="block">
-        <div class="users">
-            {% for member in object_list %}
-                {% include 'includes/user_info_inc.html' with object=member %}
-            {% empty %}
-                <p class="nothing-here">Нет пользователей</p>
-            {% endfor %}
-            {% include 'includes/pagination_inc.html' %}
-        </div>
+    <div class="user-grid">
+        {% for member in object_list %}
+            {% include 'includes/user_info_inc.html' with object=member %}
+        {% empty %}
+            <p class="nothing-here">Нет пользователей</p>
+        {% endfor %}
     </div>
+    {% include 'includes/pagination_inc.html' %}
 {% endblock %}
