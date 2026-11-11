@@ -5,7 +5,18 @@
 (function () {
     'use strict';
 
-    const csrfToken = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
+    const metaToken = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
+
+    function getCookie(name) {
+        const row = document.cookie.split('; ').find((item) => item.startsWith(name + '='));
+        return row ? decodeURIComponent(row.split('=').slice(1).join('=')) : '';
+    }
+
+    // Токен из cookie всегда свежий (Django меняет его при входе и выходе),
+    // токен из <meta> нужен как запасной вариант
+    function csrfToken() {
+        return getCookie('csrftoken') || metaToken;
+    }
 
     function showError(message) {
         const toast = document.createElement('div');
@@ -25,7 +36,7 @@
         });
         const response = await fetch(url, {
             method: 'POST',
-            headers: {'X-CSRFToken': csrfToken, 'X-Requested-With': 'XMLHttpRequest'},
+            headers: {'X-CSRFToken': csrfToken(), 'X-Requested-With': 'XMLHttpRequest'},
             body: body,
             credentials: 'same-origin',
         });
@@ -36,6 +47,9 @@
             // ответ без JSON: ниже сработает проверка response.ok
         }
         if (!response.ok || payload.success === false) {
+            if (response.status === 403 && !payload.error) {
+                throw new Error('Страница устарела. Обновите ее (F5) и повторите действие.');
+            }
             throw new Error(payload.error || 'Произошла ошибка. Попробуйте еще раз.');
         }
         return payload;
