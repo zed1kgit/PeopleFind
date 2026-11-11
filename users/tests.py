@@ -1,7 +1,7 @@
 from unittest import mock
 
 from django.core import mail
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -49,13 +49,13 @@ class ActivationEmailTests(TestCase):
                 make_user(1, is_email_verified=True)
         delay.assert_not_called()
 
+    @override_settings(SITE_URL='http://testserver')
     def test_task_sends_email_with_absolute_link(self):
         user = make_user(1, is_email_verified=False)
         send_activation_email_task(user.pk)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, [user.email])
-        self.assertIn('http://', mail.outbox[0].body)
-        self.assertIn('/activate/', mail.outbox[0].body)
+        self.assertIn('http://testserver/activate/', mail.outbox[0].body)
 
     def test_task_does_nothing_for_verified_user(self):
         user = make_user(1)
